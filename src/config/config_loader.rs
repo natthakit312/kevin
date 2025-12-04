@@ -30,10 +30,15 @@ pub fn load() -> Result<DotEnvyConfig> {
         .expect("SECRET is valid")
         .parse()?;
 
+    let max_crew_size = std::env::var("MAX_CREW_SIZE")
+        .expect("MAX_CREW_SIZE is valid")
+        .parse()?;
+
     let config = DotEnvyConfig {
         server,
         database,
         secret,
+        max_crew_size,
     };
 
     Ok(config)
