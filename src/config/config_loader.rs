@@ -4,6 +4,7 @@ use crate::config::{
     config_model::{Database, DotEnvyConfig, Server},
     stage::Stage,
 };
+use tracing::error;
 
 pub fn load() -> Result<DotEnvyConfig> {
     dotenvy::dotenv().ok();
@@ -49,4 +50,16 @@ pub fn get_stage() -> Stage {
 
     let stage_str = std::env::var("STAGE").unwrap_or("".to_string());
     Stage::try_form(&stage_str).unwrap_or_default()
+}
+
+pub fn get_user_secret() -> Result<String> {
+    let dotenvy_env = match load() {
+        Ok(env) => env,
+        Err(e) => {
+            error!("Failed to load env: {}", e);
+            std::process::exit(1);
+        }
+    };
+
+    Ok(dotenvy_env.secret)
 }
