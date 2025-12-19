@@ -1,2 +1,2 @@
 -- Your SQL goes here
-ALTER TABLE brawers ADD CONSTRAINT unique_username UNIQUE (username);
+ALTER TABLE brawlers ADD CONSTRAINT unique_username UNIQUE (username);

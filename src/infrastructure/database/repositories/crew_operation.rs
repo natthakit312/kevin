@@ -11,23 +11,23 @@ use std::sync::Arc;
 use crate::{
     domain::{
         entities::crew_memberships::CrewMemberShips,
-        repositories::crew_operation::CrewParticipationRepository,
+        repositories::crew_operation::CrewOperationRepository,
     },
     infrastructure::database::{postgresql_connection::PgPoolSquad, schema::crew_memberships},
 };
 
-pub struct CrewParticipationPostgres {
+pub struct CrewOperationPostgres {
     db_pool: Arc<PgPoolSquad>,
 }
 
-impl CrewParticipationPostgres {
+impl CrewOperationPostgres {
     pub fn new(db_pool: Arc<PgPoolSquad>) -> Self {
         Self { db_pool }
     }
 }
 
 #[async_trait]
-impl CrewParticipationRepository for CrewParticipationPostgres {
+impl CrewOperationRepository for CrewOperationPostgres {
     async fn join(&self, crew_member_ships: CrewMemberShips) -> Result<()> {
         let mut conn = Arc::clone(&self.db_pool).get()?;
         insert_into(crew_memberships::table)

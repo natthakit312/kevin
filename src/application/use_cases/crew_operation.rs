@@ -1,5 +1,5 @@
 use crate::domain::entities::crew_memberships::CrewMemberShips;
-use crate::domain::repositories::crew_operation::CrewParticipationRepository;
+use crate::domain::repositories::crew_operation::CrewOperationRepository;
 use crate::domain::repositories::mission_viewing::MissionViewingRepository;
 use crate::domain::value_objects::mission_statuses::MissionStatuses;
 use anyhow::Result;
@@ -14,7 +14,7 @@ pub struct CrewOperationUseCase<T1, T2> {
 
 impl<T1, T2> CrewOperationUseCase<T1, T2>
 where
-    T1: CrewParticipationRepository + Send + Sync + 'static,
+    T1: CrewOperationRepository + Send + Sync + 'static,
     T2: MissionViewingRepository + Send + Sync,
 {
     pub fn new(crew_operation_repository: Arc<T1>, mission_viewing_repository: Arc<T2>) -> Self {
@@ -28,7 +28,8 @@ where
         let mission = self
             .mission_viewing_repository
             .view_detail(mission_id)
-            .await?;
+            .await
+            .map_err(|_| anyhow::anyhow!("Mission with ID {} not found", mission_id))?;
 
         let crew_count = self
             .mission_viewing_repository
@@ -48,6 +49,17 @@ where
 
         self.crew_operation_repository
             .join(CrewMemberShips {
+                mission_id,
+                brawler_id,
+            })
+            .await?;
+
+        Ok(())
+    }
+
+    pub async fn leave(&self, mission_id: i32, brawler_id: i32) -> Result<()> {
+        self.crew_operation_repository
+            .leave(CrewMemberShips {
                 mission_id,
                 brawler_id,
             })

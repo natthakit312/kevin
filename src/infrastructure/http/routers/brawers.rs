@@ -12,6 +12,7 @@ use axum::{Json, Router, extract::State, http::StatusCode, response::IntoRespons
 use std::sync::Arc;
 
 pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
+    
     let repository = BrawlerPostgres::new(db_pool.clone());
     let use_case = BrawlersUseCase::new(Arc::new(repository));
 

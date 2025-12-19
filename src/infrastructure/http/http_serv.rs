@@ -22,7 +22,7 @@ use crate::{
     config::config_model::DotEnvyConfig,
     infrastructure::{
         database::postgresql_connection::PgPoolSquad,
-        http::routers::{self, default_routers},
+        http::routers::{self},
     },
 };
 
@@ -36,9 +36,19 @@ fn static_serve() -> Router {
 
 fn api_serve(db_pool: Arc<PgPoolSquad>) -> Router {
     Router::new()
-        .nest("/brawers", routers::brawers::routes(Arc::clone(&db_pool)))
-        .nest("/missions", routers::mission_managment::routes(Arc::clone(&db_pool)))
-        .nest("/authentication", routers::authentication::routes(Arc::clone(&db_pool)))
+        .nest("/brawlers", routers::brawers::routes(Arc::clone(&db_pool)))
+        .nest(
+            "/crew",
+            routers::crew_operation::routes(Arc::clone(&db_pool)),
+        )
+        .nest(
+            "/mission-management",
+            routers::mission_managment::routes(Arc::clone(&db_pool)),
+        )
+        .nest(
+            "/authentication",
+            routers::authentication::routes(Arc::clone(&db_pool)),
+        )
         .fallback(|| async { (StatusCode::NOT_FOUND, "API not found") })
 }
 
