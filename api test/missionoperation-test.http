@@ -1,0 +1,17 @@
+### Mission In Progress
+# @prompt mission_id Mission ID
+PATCH {{base_url}}/mission-operation/in_progress/{{mission_id}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### Mission To Completed
+# @prompt mission_id Mission ID
+PATCH {{base_url}}/mission-operation/to_completed/{{mission_id}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### Mission To Failed
+# @prompt mission_id Mission ID
+PATCH {{base_url}}/mission-operation/to_failed/{{mission_id}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}

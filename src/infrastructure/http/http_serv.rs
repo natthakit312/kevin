@@ -37,6 +37,8 @@ fn static_serve() -> Router {
 fn api_serve(db_pool: Arc<PgPoolSquad>) -> Router {
     Router::new()
         .nest("/brawlers", routers::brawers::routes(Arc::clone(&db_pool)))
+        .nest("/mission-viewing", routers::mission_viewing::routes(Arc::clone(&db_pool)))
+        .nest("/mission-operation", routers::mission_operation::routes(Arc::clone(&db_pool)))
         .nest(
             "/crew",
             routers::crew_operation::routes(Arc::clone(&db_pool)),

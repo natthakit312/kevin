@@ -1,10 +1,11 @@
+use std::env;
+
 use anyhow::Result;
 
 use crate::config::{
-    config_model::{Database, DotEnvyConfig, Server},
+    config_model::{CloudinaryEnv, Database, DotEnvyConfig, JwtEnv, Server},
     stage::Stage,
 };
-use tracing::error;
 
 pub fn load() -> Result<DotEnvyConfig> {
     dotenvy::dotenv().ok();
@@ -52,14 +53,31 @@ pub fn get_stage() -> Stage {
     Stage::try_form(&stage_str).unwrap_or_default()
 }
 
-pub fn get_user_secret() -> Result<String> {
-    let dotenvy_env = match load() {
-        Ok(env) => env,
-        Err(e) => {
-            error!("Failed to load env: {}", e);
-            std::process::exit(1);
-        }
-    };
+// pub fn get_user_secret() -> Result<String> {
+//     let dotenvy_env = match load() {
+//         Ok(env) => env,
+//         Err(e) => {
+//             error!("Failed to load env: {}", e);
+//             std::process::exit(1);
+//         }
+//     };
 
-    Ok(dotenvy_env.secret)
+//     Ok(dotenvy_env.secret)
+// }
+
+pub fn get_jwt_env() -> Result<JwtEnv> {
+    dotenvy::dotenv().ok();
+    Ok(JwtEnv {
+        secret: env::var("JWT_USER_SECRET")?,
+        lift_time_days: env::var("JWT_USER_LIFT_TIME_DAYS")?.parse::<i64>()?,
+    })
+}
+
+pub fn get_cloundinary_env() -> Result<CloudinaryEnv> {
+    dotenvy::dotenv().ok();
+    Ok(CloudinaryEnv {
+        cloud_name: env::var("CLOUDINARY_CLOUD_NAME")?,
+        api_key: env::var("CLOUDINARY_API_KEY")?,
+        api_secret: env::var("CLOUDINARY_API_SECRET")?,
+    })
 }

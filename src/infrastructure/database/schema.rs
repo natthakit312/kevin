@@ -7,6 +7,12 @@ diesel::table! {
         username -> Varchar,
         #[max_length = 255]
         password -> Varchar,
+        #[max_length = 50]
+        display_name -> Varchar,
+        #[max_length = 512]
+        avatar_url -> Nullable<Varchar>,
+        #[max_length = 255]
+        avatar_public_id -> Nullable<Varchar>,
         created_at -> Timestamp,
         updated_at -> Timestamp,
     }

@@ -4,6 +4,9 @@ use serde::{Deserialize, Serialize};
 pub struct RegisterBrawlerModel {
     pub username: String,
     pub password: String,
+    pub display_name: String,
+
+
 }
 
 impl RegisterBrawlerModel {
@@ -11,6 +14,8 @@ impl RegisterBrawlerModel {
         RegisterBrawlerEntity {
             username: self.username.clone(),
             password: self.password.clone(),
+            display_name: self.display_name.clone(),
+           
         }
     }
 }

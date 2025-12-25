@@ -1,5 +1,4 @@
-use crate::config::config_loader::get_user_secret;
-use crate::infrastructure;
+use crate::{config::config_loader::get_jwt_env, infrastructure};
 use axum::{
     body::Body,
     http::{Request, StatusCode, header},
@@ -20,12 +19,18 @@ pub async fn authorization(mut req: Request<Body>, next: Next) -> Result<Respons
                 .and_then(|cookie_header| cookie_header.to_str().ok())
                 .and_then(|cookie_str| get_cookie_value(cookie_str, "token"))
         })
-        .ok_or(StatusCode::UNAUTHORIZED)?;
+        .ok_or_else(|| {
+            println!("Authorization header missing or invalid");
+            StatusCode::UNAUTHORIZED
+        })?;
 
-    let secret = get_user_secret().map_err(|_| StatusCode::UNAUTHORIZED)?;
+    let jwt_env = get_jwt_env().unwrap();
+    let secret = jwt_env.secret;
 
-    let claims =
-        infrastructure::jwt::verify_token(secret, token).map_err(|_| StatusCode::UNAUTHORIZED)?;
+    let claims = infrastructure::jwt::verify_token(secret, token).map_err(|e| {
+        println!("Token verification failed: {:?}", e);
+        StatusCode::UNAUTHORIZED
+    })?;
 
     let brawler_id = claims
         .sub
