@@ -1,0 +1,9 @@
+{
+    "rest-client.environmentVariables": {
+        "$shared": {
+            "base_url": "http://127.0.0.1:8000/api",
+            "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzY3MjUzMjA0LCJpYXQiOjE3NjY2NDg0MDR9.DU30gARGaQs_1TcZjmQrEYTq-h7FaZmkCGG6HCV9EVs"
+        }
+    
+    }
+}
