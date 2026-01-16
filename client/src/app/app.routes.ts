@@ -4,11 +4,13 @@ import { Login } from './login/login';
 import { Home } from './home/home';
 import { NotFound } from './not-found/not-found';
 import { ServerError } from './server-error/server-error';
+import { authGuard } from './_gurad/auth-guard';
 
 export const routes: Routes = [
     { path: '', component: Home },
     { path: 'login', component: Login },
-    { path: 'profile', component: Profile },
+    { path: 'profile', component: Profile, canActivate: [authGuard], runGuardsAndResolvers: 'always' },
+    { path: 'not-found', component: NotFound },
     { path: 'server-error', component: ServerError },
     { path: '**', component: NotFound }
 ];

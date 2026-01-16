@@ -1,11 +1,13 @@
 <style>
 
 </style>
-<div class="containner"> 
+<div class="container">
+  <ngx-spinner type="ball-spin-clockwise" size="medium" color="#fff" [fullScreen]="true">
+    <p style="color: white">Loading...</p>
+  </ngx-spinner>
   <app-navbar></app-navbar>
-      
-       <div class="content">
-         <router-outlet></router-outlet>
-       </div>
-</div>
 
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

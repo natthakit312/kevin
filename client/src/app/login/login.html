@@ -1,1 +1,75 @@
-<p>login works!</p>
+<div class="login-container">
+    <!-- Challenge: วาง form ไว้ภายใต้ Card Component -->
+    <mat-card>
+        <mat-card-content>
+            <form (ngSubmit)="onSubmit()" [formGroup]="form" autocomplete="off">
+                <!-- Challenge: เขียนข้อความใน h3 tag (Login เมื่ออยู่ใน Mode login, Register เมื่อไม่อยู่ใน Mode login) -->
+                <h3>{{ mode === 'login' ? 'Login' : 'Register' }}</h3>
+
+                <!-- ช่องกรอก Username -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Username</mat-label>
+                    <input matInput type="text" placeholder="Type your username" formControlName="username"
+                        (input)="updateErrorMsg('username')">
+                    @if (form.get('username')?.invalid && form.get('username')?.touched) {
+                    <mat-error>{{ errorMsg.username() }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- ช่องกรอก Display Name (เฉพาะโหมด Register) -->
+                @if (mode === 'regis') {
+                <mat-form-field appearance="outline">
+                    <mat-label>aka name</mat-label>
+                    <input matInput type="text" placeholder="Type your aka name" formControlName="displayName"
+                        (input)="updateErrorMsg('displayName')">
+                    @if (form.get('displayName')?.invalid && form.get('displayName')?.touched) {
+                    <mat-error>{{ errorMsg.displayName() }}</mat-error>
+                    }
+                </mat-form-field>
+                }
+
+                <!-- ช่องกรอก Password -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" placeholder="Type your password" formControlName="password"
+                        (input)="updateErrorMsg('password')">
+                    @if (form.get('password')?.invalid && form.get('password')?.touched) {
+                    <mat-error>{{ errorMsg.password() }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- ช่องยืนยัน Password (เฉพาะโหมด Register) -->
+                @if (mode === 'regis') {
+                <mat-form-field appearance="outline">
+                    <mat-label>Confirm Password</mat-label>
+                    <input matInput type="password" placeholder="Confirm your password" formControlName="cf_password"
+                        (input)="updateErrorMsg('cf_password')">
+                    @if (form.get('cf_password')?.invalid && form.get('cf_password')?.touched) {
+                    <mat-error>{{ errorMsg.cf_password() }}</mat-error>
+                    }
+                </mat-form-field>
+                }
+
+                <!-- Server Error Message -->
+                @if (errorMsg.server()) {
+                <div class="server-error">
+                    {{ errorMsg.server() }}
+                </div>
+                }
+
+                <!-- ปุ่ม Login / Register -->
+                <button class="blue" mat-flat-button type="submit" [disabled]="form.invalid">
+                    {{ mode === 'login' ? 'Login' : 'Register' }}
+                </button>
+
+                <div class="login-spacer">or</div>
+
+                <!-- ส่วนสลับโหมด -->
+                <div class="toggle">
+                    {{ mode === 'login' ? 'New to Hero?' : 'Already have an account?' }}
+                    <span (click)="toggleMode()">{{ mode === 'login' ? 'Register' : 'Login' }}</span>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

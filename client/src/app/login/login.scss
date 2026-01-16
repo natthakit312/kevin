@@ -1,0 +1,133 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 20px;
+
+    mat-card {
+        width: 100%;
+        max-width: 400px;
+        padding: 32px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        background: white;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    h3 {
+        margin: 0 0 24px 0;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.25rem;
+        letter-spacing: 1px;
+        color: #333;
+    }
+
+    mat-form-field {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    button.blue {
+        margin-top: 16px;
+        height: 48px;
+        border-radius: 24px;
+        background-color: #1a237e; // Darker blue like in the image
+        color: white;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: transform 0.2s;
+
+        &:hover:not(:disabled) {
+            background-color: #121858;
+            transform: translateY(-1px);
+        }
+
+        &:disabled {
+            background-color: #c5cae9;
+            color: #ffffff;
+            opacity: 0.7;
+        }
+    }
+
+    .login-spacer {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 24px 0;
+        color: #888;
+        font-size: 0.9rem;
+
+        &::before,
+        &::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        &::before {
+            margin-right: 12px;
+        }
+
+        &::after {
+            margin-left: 12px;
+        }
+    }
+
+    .toggle {
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+
+        span {
+            color: #1a237e;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 4px;
+            text-decoration: underline;
+
+            &:hover {
+                color: #0d1245;
+            }
+        }
+    }
+
+    .server-error {
+        margin-top: -8px;
+        margin-bottom: 16px;
+        color: #d32f2f;
+        font-size: 0.85rem;
+        text-align: center;
+        font-weight: 500;
+    }
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
