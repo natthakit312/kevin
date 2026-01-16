@@ -5,7 +5,10 @@ use axum::{Json, Router, extract::State, http::StatusCode, response::IntoRespons
 use crate::{
     application::use_cases::authentication::AuthenticationUseCase,
     domain::repositories::brawlers::BrawlerRepository,
-    infrastructure::{database::{postgresql_connection::PgPoolSquad, repositories::brawlers::BrawlerPostgres}, jwt::authentication_model::LoginModel},
+    infrastructure::{
+        database::{postgresql_connection::PgPoolSquad, repositories::brawlers::BrawlerPostgres},
+        jwt::authentication_model::LoginModel,
+    },
 };
 
 pub async fn login<T>(
@@ -17,10 +20,16 @@ where
 {
     match user_case.login(model).await {
         Ok(passport) => (StatusCode::OK, Json(passport)).into_response(),
-        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+        Err(e) => {
+            let err_msg = e.to_string();
+            if err_msg.contains("NotFound") || err_msg.contains("not found") {
+                (StatusCode::BAD_REQUEST, "Record Not Found").into_response()
+            } else {
+                (StatusCode::INTERNAL_SERVER_ERROR, err_msg).into_response()
+            }
+        }
     }
 }
-
 
 pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
     let repository = BrawlerPostgres::new(db_pool.clone());

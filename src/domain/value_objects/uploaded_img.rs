@@ -12,6 +12,7 @@ impl UploadedImg {
     }
 }
 
+#[derive(Deserialize)]
 pub struct UploadBase64Img {
     pub base64_img: String,
 }

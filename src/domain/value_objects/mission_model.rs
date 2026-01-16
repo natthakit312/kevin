@@ -1,8 +1,10 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
-
-use crate::domain::{entities::missions::{AddMissionEntity, EditMissionEntity}, value_objects::mission_statuses::MissionStatuses};
+use crate::domain::{
+    entities::missions::{AddMissionEntity, EditMissionEntity},
+    value_objects::mission_statuses::MissionStatuses,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct MissionModel {
@@ -33,7 +35,6 @@ impl AddMissionModel {
     }
 }
 
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EditMissionModel {
     pub name: Option<String>,
@@ -47,6 +48,7 @@ impl EditMissionModel {
             description: self.description.clone(),
             status: self.status.clone(),
             chief_id,
+            deleted_at: None,
         }
     }
 }

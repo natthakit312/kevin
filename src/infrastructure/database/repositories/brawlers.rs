@@ -1,17 +1,18 @@
 use anyhow::Result;
 use async_trait::async_trait;
-use diesel::{
-    ExpressionMethods, RunQueryDsl, SelectableHelper, insert_into,
-    query_dsl::methods::{FilterDsl, SelectDsl},
-};
+use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl, SelectableHelper, insert_into};
 use std::sync::Arc;
 
 use crate::{
     domain::{
         entities::brawlers::{BrawlerEntity, RegisterBrawlerEntity},
-        repositories::brawlers::BrawlerRepository, value_objects::{base64_img::Base64Img, uploaded_img::UploadedImg},
+        repositories::brawlers::BrawlerRepository,
+        value_objects::{base64_img::Base64Img, uploaded_img::UploadedImg},
     },
-    infrastructure::{cloundinary::{self, UploadImageOptions}, database::{postgresql_connection::PgPoolSquad, schema::brawlers}},
+    infrastructure::{
+        cloundinary::{self, UploadImageOptions},
+        database::{postgresql_connection::PgPoolSquad, schema::brawlers},
+    },
 };
 
 pub struct BrawlerPostgres {
@@ -29,12 +30,12 @@ impl BrawlerRepository for BrawlerPostgres {
     async fn register(&self, register_brawler_entity: RegisterBrawlerEntity) -> Result<i32> {
         let mut connection = Arc::clone(&self.db_pool).get()?;
 
-        let result = insert_into(brawlers::table)
+        let user_id = insert_into(brawlers::table)
             .values(&register_brawler_entity)
             .returning(brawlers::id)
             .get_result::<i32>(&mut connection)?;
 
-        Ok(result)
+        Ok(user_id)
     }
 
     async fn find_by_username(&self, username: String) -> Result<BrawlerEntity> {
@@ -48,17 +49,20 @@ impl BrawlerRepository for BrawlerPostgres {
         Ok(result)
     }
 
-
-    async fn upload_base64img(&self,user_id: i32, base64_img: Base64Img,opt: UploadImageOptions)
-    ->Result<UploadedImg> {
-        let upload_img = cloundinary::upload(base64_img,opt).await?;
+    async fn upload_base64img(
+        &self,
+        user_id: i32,
+        base64_img: Base64Img,
+        opt: UploadImageOptions,
+    ) -> Result<UploadedImg> {
+        let upload_img = cloundinary::upload(base64_img, opt).await?;
         let mut conn = Arc::clone(&self.db_pool).get()?;
         diesel::update(brawlers::table.filter(brawlers::id.eq(user_id)))
-            .set((brawlers::avatar_url.eq(upload_img.url.clone()),
-            brawlers::avatar_public_id.eq(upload_img.public_id.clone())))
-            
+            .set((
+                brawlers::avatar_url.eq(upload_img.url.clone()),
+                brawlers::avatar_public_id.eq(upload_img.public_id.clone()),
+            ))
             .execute(&mut conn)?;
         Ok(upload_img)
-            
     }
 }

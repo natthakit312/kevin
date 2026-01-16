@@ -1,7 +1,9 @@
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
 
-use crate::{domain::value_objects::mission_model::MissionModel, infrastructure::database::schema::missions};
+use crate::{
+    domain::value_objects::mission_model::MissionModel, infrastructure::database::schema::missions,
+};
 
 #[derive(Debug, Clone, Identifiable, Selectable, Queryable)]
 #[diesel(table_name = missions)]
@@ -25,15 +27,15 @@ pub struct AddMissionEntity {
 }
 
 #[derive(Debug, Clone, AsChangeset)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
 #[diesel(table_name = missions)]
 pub struct EditMissionEntity {
     pub chief_id: i32,
     pub name: Option<String>,
     pub description: Option<String>,
     pub(crate) status: Option<String>,
+    pub deleted_at: Option<NaiveDateTime>,
 }
-
-
 
 impl MissionEntity {
     pub fn to_model(&self, crew_count: i64) -> MissionModel {

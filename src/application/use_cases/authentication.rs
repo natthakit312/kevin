@@ -37,6 +37,6 @@ where
             return Err(anyhow::anyhow!("Invalid password"));
         }
 
-        Passport::new(user.id)
+        Passport::new(user.id, user.display_name, user.avatar_url)
     }
 }
