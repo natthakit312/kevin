@@ -1,0 +1,44 @@
+<div class="dialog-container">
+    <div class="dialog-accent"></div>
+    <div class="dialog-content-wrapper">
+        <header class="dialog-header">
+            <h2>{{ langService.translate('dialog.new_mission.title') }}</h2>
+            <p>{{ langService.translate('dialog.new_mission.subtitle') }}</p>
+        </header>
+
+        <div class="mission-form">
+            <div class="input-group">
+                <label>{{ langService.translate('dialog.mission_name.label') }}</label>
+                <input type="text" [(ngModel)]="addMission.name"
+                    [placeholder]="langService.translate('dialog.mission_name.placeholder')" maxlength="50" />
+            </div>
+
+            <div class="input-group">
+                <label>{{ langService.translate('dialog.description.label') }}</label>
+                <textarea [(ngModel)]="addMission.description"
+                    [placeholder]="langService.translate('dialog.description.placeholder')" maxlength="500"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>{{ langService.translate('dialog.crew_limit.label') }}</label>
+                <div class="crew-input-wrapper">
+                    <input type="number" [(ngModel)]="addMission.max_crew" min="2" max="10" />
+                    <span class="crew-unit">{{ langService.translate('common.crew_member') }}</span>
+                </div>
+                <p class="input-hint" [class.error]="addMission.max_crew < 2 || addMission.max_crew > 10">
+                    {{ langService.translate('dialog.crew_limit.hint') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="dialog-actions">
+            <button mat-button mat-dialog-close class="cancel-btn">
+                {{ langService.translate('common.cancel') }}
+            </button>
+            <button (click)="onSubmit()" mat-flat-button class="submit-btn"
+                [disabled]="!addMission.name || addMission.max_crew < 2 || addMission.max_crew > 10">
+                {{ langService.translate('dialog.actions.create') }}
+            </button>
+        </div>
+    </div>
+</div>

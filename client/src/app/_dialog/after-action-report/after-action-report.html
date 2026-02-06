@@ -1,0 +1,32 @@
+<div class="aar-container">
+    <div class="aar-accent" [class.success]="data.status === 'Completed'" [class.fail]="data.status === 'Failed'"></div>
+
+    <div class="aar-content">
+        <header class="aar-header">
+            <div class="top-secret-stamp" [class.success]="data.status === 'Completed'"
+                [class.fail]="data.status === 'Failed'">
+                {{ data.status === 'Completed' ? langService.translate('missions.status.completed').toUpperCase() :
+                langService.translate('missions.status.failed').toUpperCase() }}
+            </div>
+            <div class="header-main">
+                <span class="classification">{{ langService.translate('aar.top_secret') }}</span>
+                <h1>{{ langService.translate('aar.title') }}</h1>
+            </div>
+        </header>
+
+        <div class="report-body">
+            <pre class="typewriter-text">{{ displayedText() }}</pre>
+            <div class="cursor"></div>
+        </div>
+
+        <div class="aar-footer">
+            <div class="signature-line">
+                <span class="label">{{ langService.translate('aar.authorized_by') }}</span>
+                <span class="value">SYSTEM_AI_ANTIGRAVITY</span>
+            </div>
+            <button mat-flat-button class="close-btn" (click)="onClose()">
+                {{ langService.translate('aar.acknowledge') }}
+            </button>
+        </div>
+    </div>
+</div>

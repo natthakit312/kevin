@@ -3,11 +3,10 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 export const PasswordValidator = (min: number, max: number): ValidatorFn => {
     return (ctrl: AbstractControl): ValidationErrors | null => {
         const password = ctrl.value;
-        if (!password) return { required: true };
+        if (!password) return null; // Let required validator handle empty
         if (password.length < min || password.length > max) return { invalidLength: true };
-        if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) return { invalidFormat: true };
-        return null;
 
+        return null;
     }
 }
 

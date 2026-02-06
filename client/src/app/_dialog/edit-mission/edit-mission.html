@@ -1,0 +1,32 @@
+<div class="dialog-container">
+    <div class="dialog-accent"></div>
+    <div class="dialog-content-wrapper">
+        <header class="dialog-header">
+            <h2>{{ langService.translate('dialog.edit_mission.title') }}</h2>
+            <p>{{ langService.translate('hud.mod_op_data') }}</p>
+        </header>
+
+        <div class="mission-form">
+            <div class="input-group">
+                <label>{{ langService.translate('dialog.mission_name.label') }}</label>
+                <input type="text" [(ngModel)]="missionData.name"
+                    [placeholder]="langService.translate('dialog.mission_name.placeholder')" maxlength="50" />
+            </div>
+
+            <div class="input-group">
+                <label>{{ langService.translate('dialog.description.label') }}</label>
+                <textarea [(ngModel)]="missionData.description"
+                    [placeholder]="langService.translate('dialog.description.placeholder')" maxlength="500"></textarea>
+            </div>
+        </div>
+
+        <div class="dialog-actions">
+            <button mat-button mat-dialog-close class="cancel-btn">
+                {{ langService.translate('common.cancel') }}
+            </button>
+            <button (click)="onSubmit()" mat-flat-button class="submit-btn" [disabled]="!missionData.name">
+                {{ langService.translate('common.save') }}
+            </button>
+        </div>
+    </div>
+</div>

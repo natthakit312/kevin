@@ -1,1 +1,126 @@
-<p>home works!</p>
+<div class="dashboard-container fade-in">
+
+    <!-- MAIN COLUMN: HERO & FEED -->
+    <div class="main-column">
+
+        <!-- HERO: Welcome Back -->
+        <div class="welcome-hero">
+            <div class="hero-content">
+                <h1>{{ user() ? (langService.translate('home.welcome') + ' ' + user()?.displayName) :
+                    langService.translate('home.guest.title') }}</h1>
+                <p>{{ user() ? langService.translate('home.subtitle') : langService.translate('home.guest.subtitle') }}
+                </p>
+            </div>
+
+            <div class="hero-actions" *ngIf="user()">
+                <button mat-flat-button color="primary" routerLink="/chief">
+                    <mat-icon>add</mat-icon> {{ langService.translate('home.create_mission') }}
+                </button>
+                <button mat-stroked-button routerLink="/missions">
+                    <mat-icon>search</mat-icon> {{ langService.translate('home.find_mission') }}
+                </button>
+            </div>
+            <div class="hero-actions" *ngIf="!user()">
+                <button mat-flat-button color="primary" routerLink="/login" [queryParams]="{mode: 'regis'}">
+                    {{ langService.translate('home.guest.cta') }}
+                </button>
+                <button mat-stroked-button routerLink="/login">
+                    {{ langService.translate('home.guest.login') }}
+                </button>
+            </div>
+        </div>
+
+        <!-- ACTIVITY FEED (Chat Community) -->
+        <div class="feed-section">
+            <div class="section-header">
+                <h2>
+                    <mat-icon>forum</mat-icon> {{ langService.translate('home.activity.title') }}
+                </h2>
+            </div>
+
+            <div class="activity-feed">
+                @for (activity of recentActivities(); track activity.time) {
+                <div class="feed-item">
+                    <div class="feed-avatar">
+                        <span class="initials">{{ activity.user.slice(0, 2).toUpperCase() }}</span>
+                    </div>
+                    <div class="feed-content">
+                        <div class="feed-header">
+                            <span class="user-name">{{ activity.user }}</span>
+                            <span class="timestamp">{{ activity.time | date:'h:mm a' }}</span>
+                        </div>
+                        <div class="action-text">
+                            {{ langService.translate(activity.actionKey) }}
+                            <a [routerLink]="['/missions', activity.missionId]" class="mission-link">
+                                {{ activity.missionName }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                } @empty {
+                <div class="empty-feed" style="text-align: center; padding: 40px; color: var(--app-text-muted);">
+                    {{ langService.translate('home.activity.empty') }}
+                </div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SIDEBAR COLUMN -->
+    <div class="sidebar-column">
+
+        <!-- PROFILE CARD -->
+        <div class="profile-card" *ngIf="user()">
+            <div class="avatar-wrapper">
+                <img [src]="avatarUrl()" alt="Profile">
+            </div>
+            <h3>{{ user()?.displayName }}</h3>
+            <span class="user-status">Operator // Online</span>
+
+            <div class="quick-stats">
+                <div class="stat">
+                    <span class="val">{{ stats().totalCreated }}</span>
+                    <span class="lbl">{{ langService.translate('home.stat.created') }}</span>
+                </div>
+                <div class="stat">
+                    <span class="val">{{ stats().totalJoined }}</span>
+                    <span class="lbl">{{ langService.translate('home.stat.joined') }}</span>
+                </div>
+                <div class="stat">
+                    <span class="val">{{ stats().totalCompleted }}</span>
+                    <span class="lbl">{{ langService.translate('home.stat.completed') }}</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button mat-stroked-button style="width: 100%;" routerLink="/profile">
+                    {{ langService.translate('home.profile.view') }}
+                </button>
+            </div>
+        </div>
+
+        <!-- TRENDING CARD -->
+        <div class="trending-card">
+            <h3>
+                <mat-icon>trending_up</mat-icon> {{ langService.translate('home.trending.title') }}
+            </h3>
+            <div class="trending-list">
+                @for (mission of topMissions().slice(0, 5); track mission.id) {
+                <div class="trending-item" [routerLink]="['/missions', mission.id]">
+                    <span class="name">{{ mission.name }}</span>
+                    <span class="status">{{ mission.status }}</span>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- GUEST BANNER (If not logged in, sidebar promo) -->
+        <div class="guest-banner" *ngIf="!user()">
+            <h2>Join the Corps</h2>
+            <p>Sign up to track stats and join missions.</p>
+        </div>
+
+    </div>
+
+</div>

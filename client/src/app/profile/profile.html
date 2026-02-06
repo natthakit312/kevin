@@ -1,1 +1,77 @@
-<p>profile works!</p>
+<div class="profile-page fade-in">
+    <div class="profile-card">
+        <header class="profile-header">
+            <div class="classified-tag">[CLASSIFIED_PERSONNEL_FILE]</div>
+            <h1>{{ langService.translate('profile.title') }}</h1>
+        </header>
+
+        <div class="avatar-section">
+            <div class="avatar-wrapper">
+                <div class="face-track"></div>
+                <div class="scanline"></div>
+                <img [src]="avatar_url()" alt="User Avatar" class="profile-avatar" />
+                <button mat-mini-fab color="primary" class="edit-avatar-btn tactical-fab"
+                    (click)="openUploadPhotoDialog()">
+                    <mat-icon>photo_camera</mat-icon>
+                </button>
+            </div>
+            <div class="user-main-info">
+                <h2>{{ user()?.displayName }}</h2>
+                @if (user()?.username) {
+                <span class="username-tag">@{{ user()?.username }}</span>
+                }
+            </div>
+        </div>
+
+        <div class="profile-details">
+            <div class="detail-item">
+                <div class="sync-indicator"></div>
+                <label>{{ langService.translate('profile.display_name') }}</label>
+                <div class="detail-value">{{ user()?.displayName }}</div>
+            </div>
+            @if (user()?.username) {
+            <div class="detail-item">
+                <div class="sync-indicator"></div>
+                <label>{{ langService.translate('profile.username') }}</label>
+                <div class="detail-value">@{{ user()?.username }}</div>
+            </div>
+            }
+            <div class="detail-item">
+                <div class="sync-indicator"></div>
+                <label>{{ langService.translate('profile.id') }}</label>
+                <div class="detail-value digital">#{{ user()?.id }}</div>
+            </div>
+
+            <!-- Specialty / Call Sign Section -->
+            <div class="detail-item specialty-row">
+                <div class="sync-indicator"></div>
+                <label>OPERATOR_SPECIALTY</label>
+
+                <div class="detail-value-wrapper">
+                    @if (!isEditingSpecialty) {
+                    <div class="detail-value call-sign" (click)="editSpecialty()">
+                        {{ user()?.specialty || 'RECON' }}
+                        <mat-icon class="edit-icon">edit</mat-icon>
+                    </div>
+                    } @else {
+                    <div class="edit-specialty-group">
+                        <input [(ngModel)]="tempSpecialty" class="tactical-input" maxlength="20"
+                            (keyup.enter)="saveSpecialty()">
+                        <button mat-icon-button color="primary"
+                            (click)="saveSpecialty()"><mat-icon>check</mat-icon></button>
+                        <button mat-icon-button color="warn" (click)="cancelEdit()"><mat-icon>close</mat-icon></button>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-footer">
+            <div class="clearance-box">
+                <span class="label">CLEARANCE_LEVEL:</span>
+                <span class="value">TOP_SECURE</span>
+            </div>
+            <p class="crypto-text">ACCESS_LOG: LAST_SYNCED_{{ user()?.id }}</p>
+        </div>
+    </div>
+</div>

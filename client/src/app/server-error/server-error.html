@@ -1,1 +1,45 @@
-<p>server-error works!</p>
+<div class="error-container system-breach">
+    <div class="warning-overlay"></div>
+    <div class="content-wrapper">
+        <div class="hud-frame critical">
+            <div class="bracket tl"></div>
+            <div class="bracket tr"></div>
+            <div class="bracket bl"></div>
+            <div class="bracket br"></div>
+
+            <div class="warning-icon-wrapper">
+                <mat-icon class="critical-icon">warning</mat-icon>
+            </div>
+
+            <div class="message-group">
+                <h2 class="error-title">{{ langService.translate('hud.system_critical') }}: {{
+                    langService.translate('hud.breach_detected') }}</h2>
+                <div class="error-code-label">{{ langService.translate('hud.err_code', {code: '500_INTERNAL_FAIL'}) }}
+                </div>
+
+                @if(errorMsg){
+                <div class="terminal-error">
+                    <span class="prompt">></span> {{errorMsg}}
+                </div>
+                } @else {
+                <p class="error-description">
+                    {{ langService.translate('hud.server_error_desc') }}
+                </p>
+                }
+            </div>
+
+            <div class="action-section">
+                <button mat-flat-button color="warn" class="tactical-btn" (click)="retry()">
+                    <mat-icon>refresh</mat-icon>
+                    {{ langService.translate('hud.re_initialize') }}
+                </button>
+            </div>
+        </div>
+
+        <div class="system-status-log">
+            > [CORE_TEMP: OVERHEATING]
+            > [DATA_INTEGRITY: COMPROMISED]
+            > [AUTO_STABILIZATION: ACTIVE]
+        </div>
+    </div>
+</div>

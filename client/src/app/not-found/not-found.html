@@ -1,25 +1,36 @@
-<section class="page_404">
-	<div class="container">
-		<div class="row">
-			<div class="col-sm-12 ">
-				<div class="col-sm-10 col-sm-offset-1  text-center">
-					<div class="four_zero_four_bg">
-						<h1 class="text-center ">404</h1>
+<div class="error-container signal-lost">
+	<div class="scanlines"></div>
+	<div class="content-wrapper">
+		<div class="hud-frame">
+			<div class="bracket tl"></div>
+			<div class="bracket tr"></div>
+			<div class="bracket bl"></div>
+			<div class="bracket br"></div>
 
+			<div class="glitch-wrapper">
+				<h1 class="error-code" data-text="404">404</h1>
+			</div>
 
-					</div>
+			<div class="message-group">
+				<h2 class="error-title">{{ langService.translate('hud.area_unreachable') }}: {{
+					langService.translate('hud.signal_lost') }}</h2>
+				<p class="error-description">
+					{{ langService.translate('hud.not_found_desc') }}
+				</p>
+			</div>
 
-					<div class="contant_box_404">
-						<h3 class="h2">
-							Look like you're lost
-						</h3>
-
-						<p>the page you are looking for not avaible!</p>
-
-						<a routerLink="/" class="link_404">Go to Home</a>
-					</div>
-				</div>
+			<div class="action-section">
+				<button mat-flat-button color="primary" class="tactical-btn" routerLink="/">
+					<mat-icon>navigation</mat-icon>
+					{{ langService.translate('hud.re_acquire_signal') }}
+				</button>
 			</div>
 		</div>
+
+		<div class="system-log">
+			> [LOG: 404_ERR_SECTOR_MISSING]
+			> [REMOTE_SERVER_ID: KEVIN_OS]
+			> [STATUS: RETRY_FAILED]
+		</div>
 	</div>
-</section>
+</div>

@@ -1,7 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, Injector } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { Observable, throwError } from 'rxjs';
+import { PassportService } from './passport-service';
 
 @Injectable({
   providedIn: 'root',
@@ -9,14 +10,16 @@ import { Observable, throwError } from 'rxjs';
 export class ErrorService {
   private router = inject(Router)
   private _snackbar = inject(MatSnackBar)
+  private injector = inject(Injector);
   private _snackbarConfig: MatSnackBarConfig = {
     horizontalPosition: 'right',
-    verticalPosition: 'top',
-
+    verticalPosition: 'top'
   }
 
   handleError(error: any): Observable<never> {
     if (error) {
+      console.log('ErrorService caught:', error.status, error); // Debug log
+
       switch (error.status) {
         case 400:
           const msg = error.error?.message || error.error;
@@ -27,7 +30,19 @@ export class ErrorService {
           }
           break;
         case 401:
-          this._snackbar.open('unauthorized', 'ok', this._snackbarConfig)
+          this._snackbar.open('Session expired. Please login again.', 'ok', this._snackbarConfig);
+
+          // Lazy load PassportService to avoid Circular Dependency
+          try {
+            const passport = this.injector.get(PassportService);
+            passport.destroy();
+          } catch (e) {
+            console.error('Could not destroy passport via DI', e);
+            // Fallback
+            localStorage.removeItem('passport');
+          }
+
+          this.router.navigate(['/login']); // Use /login direct route
           break;
         case 404:
           this.router.navigate(['/not-found'])
@@ -48,7 +63,8 @@ export class ErrorService {
               error: error.error
             }
           }
-          this.router.navigate(['/server-error'])
+          // Optionally don't navigate away on 500 loop for polling?
+          // this.router.navigate(['/server-error'])
           break;
         default:
           this._snackbar.open('Something went wrong!!!, Please try again later', 'ok', this._snackbarConfig)

@@ -1,0 +1,141 @@
+.dialog-container {
+    padding: 0;
+    background: #0d0e12;
+    border-radius: 2px !important;
+    overflow: hidden;
+    color: var(--app-text-main);
+    border: 1px solid var(--app-border);
+}
+
+.dialog-accent {
+    height: 4px;
+    background: var(--app-primary);
+}
+
+.dialog-content-wrapper {
+    padding: 32px;
+}
+
+.dialog-header {
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--app-border);
+    padding-bottom: 16px;
+
+    h2 {
+        font-family: 'Roboto Condensed', sans-serif !important;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--app-text-main);
+        margin: 0;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    p {
+        color: var(--app-accent);
+        margin: 4px 0 0 0;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        opacity: 0.8;
+    }
+}
+
+.mission-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--app-accent);
+            padding-left: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+
+        input,
+        textarea {
+            padding: 12px 16px;
+            border-radius: 2px;
+            border: 1px solid var(--app-border);
+            background: rgba(0, 0, 0, 0.3);
+            font-size: 0.95rem;
+            color: var(--app-text-main);
+            transition: all 0.1s ease;
+            outline: none;
+            font-family: 'Outfit', sans-serif;
+
+            &:focus {
+                border-color: var(--app-accent);
+                background: rgba(0, 0, 0, 0.5);
+                box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+            }
+
+            &::placeholder {
+                color: var(--app-text-muted);
+                opacity: 0.4;
+            }
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+    }
+}
+
+.dialog-actions {
+    margin-top: 32px;
+    padding: 24px 0 0 0;
+    border-top: 1px solid var(--app-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    button {
+        height: 48px;
+        border-radius: 2px !important;
+        font-family: 'Roboto Condensed', sans-serif !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+        padding: 0 32px;
+        transition: all 0.1s;
+    }
+
+    .cancel-btn {
+        color: var(--app-text-muted);
+        border: 1px solid var(--app-border) !important;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: white !important;
+        }
+    }
+
+    .submit-btn {
+        background: var(--app-primary) !important;
+        color: #000 !important;
+        border: none !important;
+
+        &:hover:not(:disabled) {
+            filter: brightness(1.2);
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.4) !important;
+        }
+
+        &:disabled {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: rgba(255, 255, 255, 0.2) !important;
+            cursor: not-allowed;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+    }
+}

@@ -1,0 +1,147 @@
+<div class="missions-page-container fade-in">
+  <!-- Header Section -->
+  <header class="missions-header">
+    <h1>{{ langService.translate('missions.title') }}</h1>
+  </header>
+
+  <!-- Main Content Card -->
+  <div class="content-card">
+
+    <!-- Filter Toolbar -->
+    <div class="filter-toolbar">
+      <!-- Folder Tabs for Status -->
+      <div class="folder-tabs">
+        <div class="tab-item" [class.active]="filter.status === undefined" (click)="setFilterStatus(undefined)">
+          <span>{{ langService.translate('missions.all_statuses') }}</span>
+        </div>
+        <div class="tab-item" [class.active]="filter.status === 'Open'" (click)="setFilterStatus('Open')">
+          <span>{{ langService.translate('missions.status.open') }}</span>
+        </div>
+        <div class="tab-item" [class.active]="filter.status === 'InProgress'" (click)="setFilterStatus('InProgress')">
+          <span>{{ langService.translate('missions.status.in_progress') }}</span>
+        </div>
+        <div class="tab-item" [class.active]="filter.status === 'Completed'" (click)="setFilterStatus('Completed')">
+          <span>{{ langService.translate('missions.status.completed') }}</span>
+        </div>
+        <div class="tab-item" [class.active]="filter.status === 'Failed'" (click)="setFilterStatus('Failed')">
+          <span>{{ langService.translate('missions.status.failed') }}</span>
+        </div>
+      </div>
+
+      <!-- COD Style Search Box -->
+      <div class="search-box-cod">
+        <mat-icon>search</mat-icon>
+        <input type="text" [(ngModel)]="filter.name"
+          [placeholder]="langService.translate('missions.search.placeholder')" (keydown.enter)="onSubmit()">
+      </div>
+
+
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+      <table mat-table [dataSource]="(missions$ | async) || []" class="mission-table">
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> {{ langService.translate('missions.table.name') }} </th>
+          <td mat-cell *matCellDef="let mission">
+            <span class="cell-primary">{{mission.name}}</span>
+          </td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef> {{ langService.translate('missions.table.description') }} </th>
+          <td mat-cell *matCellDef="let mission" class="description-cell">
+            {{mission.description || '—'}}
+          </td>
+        </ng-container>
+
+        <!-- Creator Column -->
+        <ng-container matColumnDef="chief_display_name">
+          <th mat-header-cell *matHeaderCellDef> {{ langService.translate('missions.table.creator') }} </th>
+          <td mat-cell *matCellDef="let mission">
+            <div class="creator-cell">
+              <mat-icon class="creator-icon">account_circle</mat-icon>
+              <span>{{mission.chief_display_name}}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Crew Count Column -->
+        <ng-container matColumnDef="crew_count">
+          <th mat-header-cell *matHeaderCellDef> {{ langService.translate('missions.table.crew') }} </th>
+          <td mat-cell *matCellDef="let mission"> {{mission.crew_count}} / {{mission.max_crew}} </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> {{ langService.translate('missions.table.status') }} </th>
+          <td mat-cell *matCellDef="let mission">
+            <span class="status-pill" [attr.status]="mission.status">
+              {{ langService.translate('missions.status.' + mission.status.toLowerCase()) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Created At Column -->
+        <ng-container matColumnDef="created_at">
+          <th mat-header-cell *matHeaderCellDef> {{ langService.translate('missions.table.created') }} </th>
+          <td mat-cell *matCellDef="let mission"> {{mission.created_at | date:'d/M/yy, h:mm a'}} </td>
+        </ng-container>
+
+        <!-- Updated At Column -->
+        <ng-container matColumnDef="updated_at">
+          <th mat-header-cell *matHeaderCellDef> {{ langService.translate('missions.table.updated') }} </th>
+          <td mat-cell *matCellDef="let mission"> {{mission.updated_at | date:'d/M/yy, h:mm a'}} </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> {{ langService.translate('missions.table.actions') }} </th>
+          <td mat-cell *matCellDef="let mission">
+            <div class="actions-wrapper">
+              <button mat-icon-button (click)="viewMission(mission)"
+                [matTooltip]="langService.translate('missions.action.view')">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              @if (isSignin()) {
+              @if (isJoined(mission.id)) {
+              <button mat-stroked-button color="warn" (click)="onLeave(mission)"
+                *ngIf="mission.status !== 'Completed' && mission.status !== 'Failed'">
+                <mat-icon>exit_to_app</mat-icon>
+                {{ langService.translate('missions.action.leave') }}
+              </button>
+              } @else if (mission.status === 'Open') {
+              <button mat-flat-button color="primary" (click)="onJoin(mission)">
+                {{ langService.translate('missions.action.join') }}
+              </button>
+              }
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="mission-row"></tr>
+
+        <!-- Empty State Row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+            {{ langService.translate('missions.empty') }}
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Load More -->
+    <div class="load-more-footer" *ngIf="hasMore()">
+      <button mat-button (click)="loadMore()" [disabled]="loadingMore()">
+        <mat-icon *ngIf="!loadingMore()">expand_more</mat-icon>
+        <span *ngIf="!loadingMore()">{{ langService.translate('missions.action.load_more') }}</span>
+        <span *ngIf="loadingMore()">{{ langService.translate('hud.processing') }}</span>
+      </button>
+    </div>
+  </div>
+</div>

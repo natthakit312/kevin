@@ -1,8 +1,11 @@
 import { Passport } from "../_models/passport";
 
-const _default_avatar = 'assets/defult avartar.jpg';
+const _default_avatar = '/assets/default-avatar.jpg';
 
-export function getAvatar(passport: Passport | undefined): string {
-    if (passport?.avatarUrl) return passport.avatarUrl;
+export function getAvatarUrl(source: Passport | string | undefined | null): string {
+    if (typeof source === 'string' && source.trim() !== '') return source;
+    if (source && typeof source === 'object' && 'avatarUrl' in source && source.avatarUrl) {
+        return source.avatarUrl;
+    }
     return _default_avatar;
 }

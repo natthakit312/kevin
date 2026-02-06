@@ -5,24 +5,66 @@
         <span>Kevin</span>
     </button>
 
+    <!-- Navigation Links -->
+    <div class="nav-links">
+        <button mat-button routerLink="/missions" class="missions-btn" routerLinkActive="active">
+            <mat-icon>assignment</mat-icon>
+            <span>{{ langService.translate('nav.missions') }}</span>
+        </button>
+
+        @if (passport.isSignin()) {
+        <button mat-button class="button" routerLink="/chief" routerLinkActive="active">
+            {{ langService.translate('nav.my_created') }}
+        </button>
+        <button mat-button class="button" routerLink="/crew" routerLinkActive="active">
+            {{ langService.translate('nav.my_joined') }}
+        </button>
+        }
+    </div>
+
     <span class="spacer"></span>
 
-    <div class="nav-links">
+    <div class="nav-right">
+        <!-- Language Toggle -->
+        <button mat-button class="lang-toggle" (click)="langService.toggle()">
+            <mat-icon>language</mat-icon>
+            <span>{{ langService.currentLang().toUpperCase() }}</span>
+        </button>
+
         <button mat-button [matMenuTriggerFor]="menu" class="profile-btn">
             <img [src]="avatar_url()" class="avatar" alt="User Avatar">
-            <span>{{ display_name() }}</span>
+            <span>{{ display_name() || langService.translate('common.guest') }}</span>
         </button>
-        <mat-menu #menu="matMenu">
+        <mat-menu #menu="matMenu" class="tactical-profile-menu">
             <button mat-menu-item [routerLink]="profile_link()">
                 <mat-icon>account_circle</mat-icon>
-                <span>Profile</span>
+                <span>{{ langService.translate('profile.title') }}</span>
             </button>
-            @if (passport.data()?.displayName) {
+            @if (passport.isSignin()) {
             <button mat-menu-item (click)="logout()">
                 <mat-icon>logout</mat-icon>
-                <span>Logout</span>
+                <span>{{ langService.translate('nav.logout') }}</span>
+            </button>
+            } @else {
+            <button mat-menu-item routerLink="/login">
+                <mat-icon>login</mat-icon>
+                <span>{{ langService.translate('nav.login') }}</span>
             </button>
             }
         </mat-menu>
     </div>
 </mat-toolbar>
+
+<!-- Tactical Disconnect Overlay -->
+<div class="disconnect-overlay" *ngIf="isDisconnecting()">
+    <div class="disconnect-content">
+        <div class="terminal-loader">
+            <div class="spinner"></div>
+            <div class="status-msg digital">{{ disconnectStatus() }}</div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+    <div class="scanline"></div>
+</div>

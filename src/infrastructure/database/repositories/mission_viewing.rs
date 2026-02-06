@@ -79,10 +79,11 @@ impl MissionViewingRepository for MissionViewingPostgres {
         Ok(result)
     }
 
-    async fn get(&self, filter: &MissionFilter) -> Result<Vec<MissionEntity>> {
+    async fn get(&self, filter: &MissionFilter) -> Result<Vec<(MissionEntity, i64)>> {
         let mut conn = self.db_pool.get()?;
 
         let mut query = missions::table
+            .select(MissionEntity::as_select())
             .filter(missions::deleted_at.is_null())
             .into_boxed();
 
@@ -94,11 +95,35 @@ impl MissionViewingRepository for MissionViewingPostgres {
             query = query.filter(missions::name.ilike(format!("%{}%", name)));
         };
 
-        let results = query
-            .select(MissionEntity::as_select())
+        let missions_list = query
             .order_by(missions::created_at.desc())
             .load::<MissionEntity>(&mut conn)?;
 
-        Ok(results)
+        if missions_list.is_empty() {
+            return Ok(Vec::new());
+        }
+
+        let ids: Vec<i32> = missions_list.iter().map(|m| m.id).collect();
+
+        let counts: Vec<(i32, i64)> = crew_memberships::table
+            .filter(crew_memberships::mission_id.eq_any(&ids))
+            .group_by(crew_memberships::mission_id)
+            .select((
+                crew_memberships::mission_id,
+                diesel::dsl::count(crew_memberships::brawler_id),
+            ))
+            .load::<(i32, i64)>(&mut conn)?;
+
+        let counts_map: std::collections::HashMap<i32, i64> = counts.into_iter().collect();
+
+        let result = missions_list
+            .into_iter()
+            .map(|m| {
+                let count = counts_map.get(&m.id).copied().unwrap_or(0);
+                (m, count)
+            })
+            .collect();
+
+        Ok(result)
     }
 }

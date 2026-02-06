@@ -1,3 +1,4 @@
 export const environment = {
-    baseUrl : ''
+    baseUrl: 'http://localhost:8000',
+    max_crew_size: 5
 };

@@ -1,42 +1,493 @@
-
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
-html {
-  height: 100%;
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
+:root {
+  /* Tactical HUD Theme (CoD Inspired) */
+  --app-bg: #0d0e12;
+  --app-card-bg: #14161d;
+  --app-text-main: #e2e8f0;
+  --app-text-muted: #94a3b8;
+
+  --app-primary: #f97316;
+  /* Tactical Orange */
+  --app-on-primary: #000000;
+  --app-primary-grad: linear-gradient(180deg, #f97316 0%, #ea580c 100%);
+  --app-primary-light: rgba(249, 115, 22, 0.1);
+
+  --app-accent: #06b6d4;
+  /* HUD Cyan */
+  --app-border: #2d3139;
+  --app-surface: #1e2128;
+
+  --app-status-open-bg: rgba(132, 204, 22, 0.1);
+  --app-status-open-text: #bef264;
+
+  --app-status-progress-bg: rgba(6, 182, 212, 0.1);
+  --app-status-progress-text: #67e8f9;
+
+  --app-status-done-bg: rgba(148, 163, 184, 0.1);
+  --app-status-done-text: #f1f5f9;
+
+  --app-status-failed-bg: rgba(239, 68, 68, 0.1);
+  --app-status-failed-text: #fca5a5;
+
+  --app-radius: 4px;
+  /* Sharp corners for tactical feel */
+  --app-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.02);
+
+  color-scheme: dark;
 }
 
+html,
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
-  margin: 0;
   height: 100%;
+  margin: 0;
+  background-color: var(--app-bg);
+  background-image:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)),
+    radial-gradient(circle at 50% 50%, #1a1b23 0%, #0d0e12 100%);
+  background-size: 100% 4px, 3px 100%, 100% 100%;
+  background-attachment: fixed;
+  color: var(--app-text-main);
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
 }
-/* You can add global styles to this file, and also import other style files */
- main {
-    margin: 0;
-    
+
+h1,
+h2,
+h3,
+.tactical-label {
+  font-family: 'Roboto Condensed', sans-serif;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+/* PREMIUM BUTTONS */
+.mat-mdc-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button {
+  border-radius: 2px !important;
+  /* Sharp corners */
+  font-family: 'Roboto Condensed', sans-serif !important;
+  text-transform: uppercase !important;
+  font-weight: 700 !important;
+  height: 44px !important;
+  padding: 0 24px !important;
+  font-size: 0.9rem !important;
+  letter-spacing: 0.1em !important;
+  transition: all 0.1s ease !important;
+  position: relative;
+  overflow: hidden;
+
+  /* Tactical Bevel Effect */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+    border-left: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  &.mat-mdc-unelevated-button,
+  &.mat-mdc-raised-button {
+    background-color: #242831 !important;
+    color: var(--app-text-main) !important;
+    border: 1px solid var(--app-border) !important;
+    box-shadow: none !important;
+  }
+
+  &.mat-primary {
+    background: var(--app-primary-grad) !important;
+    color: #000000 !important;
+    /* High contrast black on orange */
+    border: none !important;
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.2) !important;
+
+    &:hover:not(:disabled) {
+      filter: brightness(1.2);
+      transform: none !important;
+      box-shadow: 0 0 25px rgba(249, 115, 22, 0.4) !important;
+    }
+
+    mat-icon {
+      color: #000000 !important;
+    }
+  }
+
+  &.mat-mdc-outlined-button {
+    border: 1px solid var(--app-border) !important;
+    background: transparent !important;
+    color: var(--app-text-main) !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border-color: var(--app-text-main) !important;
+    }
+
+    &.mat-primary {
+      border: 1px solid var(--app-primary) !important;
+      color: var(--app-primary) !important;
+
+      &:hover {
+        background: var(--app-primary) !important;
+        color: #000000 !important;
+      }
+    }
+  }
+
+  /* Basic button (mat-button) */
+  &.mat-mdc-button:not(.mat-primary) {
+    color: var(--app-text-muted) !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: var(--app-text-main) !important;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: var(--app-text-muted) !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+    pointer-events: none !important;
+  }
+}
+
+/* Icon Buttons */
+.mat-mdc-icon-button {
+  width: 44px !important;
+  height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s !important;
+  color: var(--app-text-muted) !important;
+  border-radius: 4px !important;
+
+  &:hover {
+    background: rgba(6, 182, 212, 0.1) !important;
+    color: var(--app-accent) !important;
+    transform: scale(1.05);
+  }
+
+  mat-icon {
+    font-size: 22px !important;
+    width: 22px !important;
+    height: 22px !important;
+  }
+}
+
+/* PREMIUM CARDS (Tactical HUD) */
+.card,
+mat-card,
+.content-card,
+.mat-mdc-card {
+  background: rgba(13, 14, 18, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid var(--app-border) !important;
+  border-top: 2px solid var(--app-primary) !important;
+  /* Top accent bar */
+  border-radius: var(--app-radius) !important;
+  padding: 24px !important;
+  box-shadow: var(--app-shadow) !important;
+  position: relative;
+
+  h1,
+  h2,
+  h3 {
+    font-family: 'Roboto Condensed', sans-serif !important;
+    color: var(--app-text-main);
+  }
+
+  /* Decorative Corner Brackets */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-bottom: 2px solid var(--app-accent);
+    border-right: 2px solid var(--app-accent);
+    pointer-events: none;
+  }
+}
+
+/* INPUT FIELDS */
+.mat-mdc-form-field {
+  .mat-mdc-text-field-wrapper {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s;
+  }
+
+  &.mat-focused .mat-mdc-text-field-wrapper {
+    border-color: var(--app-primary);
+  }
+
+  .mat-mdc-floating-label {
+    /* Updated value below not found in original file, added for completeness based on context */
+    /* color: var(--app-text-muted) !important; */
+    color: var(--app-text-muted) !important;
+  }
+
+  input,
+  textarea {
+    color: var(--app-text-main) !important;
+  }
+}
+
+/* TABLES (Tactical Data Grid) */
+.mat-mdc-table {
+  background: transparent !important;
+
+  .mat-mdc-header-cell {
+    color: var(--app-accent) !important;
+    font-family: 'Roboto Condensed', sans-serif !important;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    font-size: 0.8rem;
+    border-bottom: 2px solid var(--app-border);
+    padding: 16px !important;
+  }
+
+  .mat-mdc-cell {
+    color: var(--app-text-main) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 16px !important;
+    font-size: 0.9rem;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .mat-mdc-row {
+    transition: background 0.1s ease;
+
+    &:hover {
+      background-color: rgba(6, 182, 212, 0.05) !important;
+      cursor: pointer;
+    }
+  }
+}
+
+/* BADGES */
+.status-pill,
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+
+  &[status="Open"] {
+    background: var(--app-status-open-bg);
+    color: var(--app-status-open-text);
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
+  }
+
+  &[status="InProgress"] {
+    background: var(--app-status-progress-bg);
+    color: var(--app-status-progress-text);
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+  }
+
+  &[status="Completed"] {
+    background: var(--app-status-done-bg);
+    color: var(--app-status-done-text);
+    box-shadow: 0 0 10px rgba(96, 165, 250, 0.2);
+  }
+
+  &[status="Failed"] {
+    background: var(--app-status-failed-bg);
+    color: var(--app-status-failed-text);
+  }
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+  border: 2px solid var(--app-bg);
+}
+
+// html {
+//   @include mat.theme((color: (primary: mat.$indigo-palette, tertiary: mat.$pink-palette),
+//       typography: Inter,
+//       density: 0,
+//     ));
+// }
+
+/* OVERLAYS & DROPDOWNS */
+.cdk-overlay-pane {
+
+  .mat-mdc-select-panel,
+  .mat-mdc-menu-panel {
+    background: #18181b !important;
+    /* Slightly lighter than pure black */
+    background: var(--app-surface) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .mat-mdc-option {
+    color: var(--app-text-main) !important;
+
+    &:hover,
+    &.mat-mdc-option-active {
+      background: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    &.mat-mdc-option-selected:not(.mat-mdc-option-multiple) {
+      background: rgba(79, 70, 229, 0.1) !important;
+      /* Primary color tint */
+      color: var(--app-primary) !important;
+    }
+  }
+
+  .mat-mdc-menu-item {
+    color: var(--app-text-main) !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    mat-icon {
+      color: var(--app-text-muted);
+    }
+  }
+}
+
+/* SNACKBAR / POPUP (Tactical Intel Style) */
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: rgba(13, 14, 18, 0.95) !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+
+  .mdc-snackbar__surface {
+    background-color: rgba(13, 14, 18, 0.95) !important;
+    border-left: 4px solid var(--app-primary) !important;
+    border-radius: 2px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
+    padding: 8px 16px !important;
+    position: relative;
+
+    &::after {
+      content: 'INCOMING_INTEL';
+      position: absolute;
+      top: -10px;
+      left: 10px;
+      font-family: 'Roboto Condensed', sans-serif;
+      font-size: 0.65rem;
+      color: var(--app-primary);
+      background: #000;
+      padding: 0 6px;
+      letter-spacing: 1px;
+    }
+  }
+
+  .mdc-snackbar__label {
+    font-family: 'Roboto Condensed', sans-serif !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+  }
+}
+
+/* TACTICAL RADAR SPINNER */
+.radar-spinner {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, var(--app-accent) 0deg, transparent 90deg);
+    transform-origin: 0 0;
+    animation: radar-sweep 2s linear infinite;
+    top: 0;
+    left: 0;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      radial-gradient(circle, var(--app-accent) 1px, transparent 1px),
+      linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px, 20px 20px, 20px 20px;
+    background-position: center;
+    opacity: 0.3;
+  }
+}
+
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.radar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+
+  .radar-label {
+    font-family: 'Roboto Condensed', sans-serif;
+    color: var(--app-accent);
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    animation: blink 1s infinite;
+  }
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }

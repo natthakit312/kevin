@@ -1,0 +1,342 @@
+:host {
+    display: block;
+    height: 100vh;
+    padding-top: 64px; // Navbar spacing
+    background: #0d0e12; // Same as global app-bg
+    overflow-y: auto; // Content scrolls, navbar stays
+}
+
+// --- CONTAINER ---
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr 340px; // Main Feed vs Sidebar
+    gap: 32px;
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr; // Stack on smaller screens
+    }
+}
+
+// --- LEFT COLUMN: FEED & HERO ---
+.main-column {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+// --- HERO SECTION ---
+.welcome-hero {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(249, 115, 22, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 4px solid var(--app-primary); // Tactical accent
+    border-radius: 2px; // Sharp corners
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .hero-content {
+        h1 {
+            font-size: 2rem;
+            font-weight: 800; // Heavier font
+            color: #fff;
+            margin-bottom: 8px;
+            text-transform: uppercase; // Military style
+            letter-spacing: 1px;
+        }
+
+        p {
+            color: var(--app-text-muted);
+            font-size: 1rem;
+            font-family: monospace; // Tech/Military detail
+        }
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 16px;
+    }
+}
+
+// --- FEED HEADER ---
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+
+    h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--app-text-muted);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+
+        mat-icon {
+            color: var(--app-primary);
+        }
+    }
+}
+
+// --- ACTIVITY FEED (The "Community Chat") ---
+.activity-feed {
+    background: var(--app-card-bg);
+    border-radius: 2px; // Sharp
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid var(--app-primary); // Tactical header
+    overflow: hidden;
+
+    .feed-item {
+        display: flex;
+        gap: 16px;
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: background 0.2s;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .feed-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 4px; // Rounded square instead of circle
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            .initials {
+                font-weight: 700;
+                color: var(--app-primary);
+                font-family: monospace;
+            }
+        }
+
+        .feed-content {
+            flex: 1;
+
+            .feed-header {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                margin-bottom: 4px;
+
+                .user-name {
+                    font-weight: 700;
+                    color: #fff;
+                    font-size: 0.95rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                .timestamp {
+                    font-size: 0.7rem;
+                    color: rgba(255, 255, 255, 0.3);
+                    font-family: monospace;
+                }
+            }
+
+            .action-text {
+                color: var(--app-text-muted);
+                font-size: 0.95rem;
+                line-height: 1.4;
+            }
+
+            .mission-link {
+                color: var(--app-accent);
+                font-weight: 600;
+                cursor: pointer;
+                text-decoration: none;
+                border-bottom: 1px dotted var(--app-accent);
+
+                &:hover {
+                    color: #fff;
+                    border-bottom-style: solid;
+                }
+            }
+        }
+    }
+}
+
+// --- RIGHT COLUMN: SIDEBAR ---
+.sidebar-column {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+// --- PROFILE CARD ---
+.profile-card {
+    background: var(--app-card-bg);
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid var(--app-accent); // Cyan accent
+    padding: 24px;
+    text-align: center;
+
+    .avatar-wrapper {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 16px;
+        border-radius: 4px; // Rounded square
+        overflow: hidden;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        padding: 2px; // Inner gap
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+    }
+
+    h3 {
+        font-size: 1.2rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #fff;
+        margin: 0 0 4px;
+        line-height: 1.2;
+    }
+
+    .user-status {
+        font-size: 0.75rem;
+        color: var(--app-primary);
+        font-family: monospace;
+        margin-bottom: 24px;
+        display: block;
+        letter-spacing: 1px;
+    }
+
+    .quick-stats {
+        display: flex;
+        justify-content: space-around;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+
+            .val {
+                font-size: 1.5rem;
+                font-weight: 800;
+                color: #fff;
+            }
+
+            .lbl {
+                font-size: 0.65rem;
+                color: var(--app-text-muted);
+                text-transform: uppercase;
+                margin-top: 4px;
+                letter-spacing: 1px;
+            }
+        }
+    }
+}
+
+// --- TRENDING LIST ---
+.trending-card {
+    background: var(--app-card-bg);
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid var(--app-primary);
+    padding: 24px;
+
+    h3 {
+        font-size: 0.85rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--app-text-muted);
+        margin: 0 0 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            color: var(--app-accent);
+        }
+    }
+
+    .trending-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover .name {
+            color: var(--app-primary);
+        }
+
+        .name {
+            font-size: 0.9rem;
+            color: var(--app-text-main);
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+
+        .status {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            font-family: monospace;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--app-text-muted);
+            text-transform: uppercase;
+        }
+    }
+}
+
+// --- GUEST BANNER ---
+.guest-banner {
+    background: #1e1b4b;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-left: 4px solid #6366f1;
+    border-radius: 2px;
+    padding: 24px;
+    color: #fff;
+    text-align: center;
+
+    h2 {
+        font-weight: 800;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    p {
+        margin-bottom: 16px;
+        opacity: 0.8;
+        font-size: 0.9rem;
+    }
+}

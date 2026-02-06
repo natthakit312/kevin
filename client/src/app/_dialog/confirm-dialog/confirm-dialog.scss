@@ -1,0 +1,136 @@
+.dialog-container {
+    padding: 0;
+    background: #0d0e12;
+    border-radius: 2px !important;
+    overflow: hidden;
+    color: var(--app-text-main);
+    border: 1px solid var(--app-border);
+    min-width: 400px;
+}
+
+.dialog-accent.warn {
+    height: 4px;
+    background: #ef4444;
+    /* Critical Danger Red */
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+}
+
+.dialog-content-wrapper {
+    padding: 32px;
+}
+
+.dialog-header {
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 16px;
+
+    .auth-tag {
+        color: #ef4444;
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 2px;
+        margin-bottom: 4px;
+    }
+
+    h2 {
+        font-family: 'Roboto Condensed', sans-serif !important;
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: white;
+        margin: 0;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+}
+
+.dialog-body {
+    margin-bottom: 32px;
+
+    .message {
+        color: var(--app-text-muted);
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 24px;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .system-check {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: monospace;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.4);
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse-red 1s infinite;
+        }
+
+        .status-text {
+            letter-spacing: 1px;
+        }
+    }
+}
+
+@keyframes pulse-red {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+
+    70% {
+        transform: scale(1.1);
+        opacity: 0.7;
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 24px;
+
+    button {
+        height: 48px;
+        border-radius: 2px !important;
+        font-family: 'Roboto Condensed', sans-serif !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+        padding: 0 32px;
+    }
+
+    .cancel-btn {
+        color: var(--app-text-muted);
+        border: 1px solid var(--app-border) !important;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: white !important;
+        }
+    }
+
+    .confirm-btn {
+        background: #ef4444 !important;
+        color: white !important;
+
+        &:hover {
+            background: #dc2626 !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4) !important;
+        }
+    }
+}

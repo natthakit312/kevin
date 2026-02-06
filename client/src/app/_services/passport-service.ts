@@ -16,7 +16,15 @@ export class PassportService {
 
 
     data = signal<undefined | Passport>(undefined)
+    isSignin = signal<boolean>(false)
 
+    saveAvatarImgUrl(url: string) {
+        const passport = this.data();
+        if (passport) {
+            this.data.set({ ...passport, avatarUrl: url });
+            this.savePassportToLocalStorage();
+        }
+    }
 
 
     private loadPassportFormLocalStorage(): string | null {
@@ -24,18 +32,42 @@ export class PassportService {
         if (!jsonString) return 'notfound'
         try {
             const passport = JSON.parse(jsonString) as Passport
-            console.log(passport);
+
+            // STRICT CHECK: If expiresIn is missing (legacy token) or expired -> LOGOUT
+            if (!passport.expiresIn) {
+                console.warn('Legacy token detected (no expiry). Forcing logout.');
+                this.destroy();
+                return 'legacy_token';
+            }
+
+            // Also check for required fields that might be missing in corrupt sessions
+            if (!passport.displayName || !passport.token && !passport.accessToken) {
+                console.warn('Corrupt passport data. Forcing logout.');
+                this.destroy();
+                return 'corrupt_data';
+            }
+
+            const now = Math.floor(Date.now() / 1000);
+            if (now >= passport.expiresIn) {
+                console.warn('Session expired, clearing passport.');
+                this.destroy();
+                return 'session_expired';
+            }
+
+            console.log('Passport loaded:', passport);
             this.data.set(passport)
+            this.isSignin.set(true)
         } catch (error) {
             return ` ${error}`
         }
         return null
     }
 
-    private savePassportToLocalStorage() {
+    private savePassportToLocalStorage(): void {
         const passport = this.data()
         if (!passport) return
         localStorage.setItem(this._key, JSON.stringify(passport))
+        this.isSignin.set(true)
     }
     constructor() {
         this.loadPassportFormLocalStorage()
@@ -65,7 +97,7 @@ export class PassportService {
 
     async register(model: RegisterModel): Promise<null | string> {
         try {
-            const api_url = this._base_url + '/brawlers/register';
+            const api_url = this._base_url + '/brawler/register';
             await this.fetchPassport(api_url, model);
         } catch (error: any) {
             console.error('Register Error:', error);
@@ -74,9 +106,21 @@ export class PassportService {
         return null;
     }
 
-    logout() {
+    async updateSpecialty(specialty: string): Promise<void> {
+        const passport = this.data();
+        if (!passport) return;
+
+        const api_url = this._base_url + '/brawler/specialty';
+        await firstValueFrom(this._http.post(api_url, { specialty }));
+
+        this.data.set({ ...passport, specialty });
+        this.savePassportToLocalStorage();
+    }
+
+    destroy() {
         this.data.set(undefined);
         localStorage.removeItem(this._key);
+        this.isSignin.set(false);
     }
 }
 

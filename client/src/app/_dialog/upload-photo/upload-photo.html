@@ -1,0 +1,39 @@
+<div class="dialog-container">
+  <div class="dialog-accent"></div>
+  <div class="dialog-content-wrapper">
+    <header class="dialog-header">
+      <div class="ops-tag">{{ langService.translate('hud.biometric_interface') }}</div>
+      <h2>{{ isUploading() ? langService.translate('hud.uploading') : langService.translate('hud.re_scan') }}</h2>
+    </header>
+
+    <div class="upload-form">
+      <div class="preview-area" (click)="fileInput.click()">
+        <div class="scanlines"></div>
+        @if (previewUrl()) {
+        <img [src]="previewUrl()" alt="Preview" class="image-preview" />
+        } @else {
+        <div class="placeholder">
+          <mat-icon>face</mat-icon>
+          <p>{{ langService.translate('hud.initialize_scan') }}</p>
+        </div>
+        }
+        <input #fileInput type="file" hidden (change)="onFileSelected($event)" [accept]="acceptMimeType.join(',')" />
+      </div>
+
+      @if (errorMessage()) {
+      <div class="error-log">
+        <span class="prefix">!</span> {{ errorMessage() }}
+      </div>
+      }
+    </div>
+
+    <div class="dialog-actions">
+      <button mat-button (click)="onCancel()" [disabled]="isUploading()" class="cancel-btn">
+        {{ langService.translate('common.cancel') }}
+      </button>
+      <button (click)="onUpload()" mat-flat-button class="submit-btn" [disabled]="!selectedFile() || isUploading()">
+        {{ isUploading() ? langService.translate('hud.processing') : langService.translate('hud.sync_profile') }}
+      </button>
+    </div>
+  </div>
+</div>

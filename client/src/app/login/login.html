@@ -1,49 +1,64 @@
 <div class="login-container">
-    <!-- Challenge: วาง form ไว้ภายใต้ Card Component -->
-    <mat-card>
-        <mat-card-content>
+    <mat-card [class.hidden]="showWelcome()">
+        @if (loading()) {
+        <div class="biometric-scan-overlay">
+            <div class="scan-target">
+                <div class="scan-line"></div>
+                <mat-icon class="scan-icon">fingerprint</mat-icon>
+            </div>
+            <div class="scan-text">{{ langService.translate('hud.biometric_active') }}</div>
+            <div class="scan-subtext">{{ langService.translate('hud.matching_id') }}</div>
+        </div>
+        }
+        <mat-card-content [@formAnimation]="mode" [class.content-blurred]="loading()">
             <form (ngSubmit)="onSubmit()" [formGroup]="form" autocomplete="off">
-                <!-- Challenge: เขียนข้อความใน h3 tag (Login เมื่ออยู่ใน Mode login, Register เมื่อไม่อยู่ใน Mode login) -->
-                <h3>{{ mode === 'login' ? 'Login' : 'Register' }}</h3>
+                <h3>{{ mode === 'login' ? langService.translate('auth.title.login') :
+                    langService.translate('auth.title.register') }}</h3>
 
-                <!-- ช่องกรอก Username -->
+                <!-- Username Field -->
                 <mat-form-field appearance="outline">
-                    <mat-label>Username</mat-label>
-                    <input matInput type="text" placeholder="Type your username" formControlName="username"
-                        (input)="updateErrorMsg('username')">
+                    <mat-label>{{ langService.translate('auth.username') }}</mat-label>
+                    <input matInput type="text" [placeholder]="langService.translate('auth.username.placeholder')"
+                        formControlName="username" (input)="updateErrorMsg('username')" [readonly]="loading()">
                     @if (form.get('username')?.invalid && form.get('username')?.touched) {
                     <mat-error>{{ errorMsg.username() }}</mat-error>
                     }
                 </mat-form-field>
 
-                <!-- ช่องกรอก Display Name (เฉพาะโหมด Register) -->
+                <!-- Display Name Field (Register Mode Only) -->
                 @if (mode === 'regis') {
                 <mat-form-field appearance="outline">
-                    <mat-label>aka name</mat-label>
-                    <input matInput type="text" placeholder="Type your aka name" formControlName="displayName"
-                        (input)="updateErrorMsg('displayName')">
+                    <mat-label>{{ langService.translate('auth.display_name') }}</mat-label>
+                    <input matInput type="text" [placeholder]="langService.translate('auth.display_name.placeholder')"
+                        formControlName="displayName" (input)="updateErrorMsg('displayName')" [readonly]="loading()">
                     @if (form.get('displayName')?.invalid && form.get('displayName')?.touched) {
                     <mat-error>{{ errorMsg.displayName() }}</mat-error>
                     }
                 </mat-form-field>
                 }
 
-                <!-- ช่องกรอก Password -->
+                <!-- Password Field -->
                 <mat-form-field appearance="outline">
-                    <mat-label>Password</mat-label>
-                    <input matInput type="password" placeholder="Type your password" formControlName="password"
-                        (input)="updateErrorMsg('password')">
+                    <mat-label>{{ langService.translate('auth.password') }}</mat-label>
+                    <input matInput [type]="hidePassword() ? 'password' : 'text'"
+                        [placeholder]="langService.translate('auth.password.placeholder')" formControlName="password"
+                        (input)="updateErrorMsg('password')" [readonly]="loading()">
+                    <button mat-icon-button matSuffix (click)="hidePassword.set(!hidePassword())" type="button"
+                        [disabled]="loading()">
+                        <mat-icon>{{hidePassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
                     @if (form.get('password')?.invalid && form.get('password')?.touched) {
                     <mat-error>{{ errorMsg.password() }}</mat-error>
                     }
                 </mat-form-field>
 
-                <!-- ช่องยืนยัน Password (เฉพาะโหมด Register) -->
+                <!-- Confirm Password Field (Register Mode Only) -->
                 @if (mode === 'regis') {
                 <mat-form-field appearance="outline">
-                    <mat-label>Confirm Password</mat-label>
-                    <input matInput type="password" placeholder="Confirm your password" formControlName="cf_password"
-                        (input)="updateErrorMsg('cf_password')">
+                    <mat-label>{{ langService.translate('auth.confirm_password') }}</mat-label>
+                    <input matInput type="password"
+                        [placeholder]="langService.translate('auth.confirm_password.placeholder')"
+                        formControlName="cf_password" (input)="updateErrorMsg('cf_password')" [readonly]="loading()">
                     @if (form.get('cf_password')?.invalid && form.get('cf_password')?.touched) {
                     <mat-error>{{ errorMsg.cf_password() }}</mat-error>
                     }
@@ -57,19 +72,40 @@
                 </div>
                 }
 
-                <!-- ปุ่ม Login / Register -->
-                <button class="blue" mat-flat-button type="submit" [disabled]="form.invalid">
-                    {{ mode === 'login' ? 'Login' : 'Register' }}
+                <!-- Submit Button -->
+                <button color="primary" mat-flat-button type="submit" [disabled]="form.invalid || loading()">
+                    @if (loading()) {
+                    <span>{{ mode === 'login' ? langService.translate('nav.login') :
+                        langService.translate('nav.register') }}...</span>
+                    } @else {
+                    {{ mode === 'login' ? langService.translate('auth.title.login') :
+                    langService.translate('auth.title.register') }}
+                    }
                 </button>
 
-                <div class="login-spacer">or</div>
+                <div class="login-spacer">{{ langService.translate('auth.or') }}</div>
 
-                <!-- ส่วนสลับโหมด -->
+                <!-- Mode Toggle -->
                 <div class="toggle">
-                    {{ mode === 'login' ? 'New to Hero?' : 'Already have an account?' }}
-                    <span (click)="toggleMode()">{{ mode === 'login' ? 'Register' : 'Login' }}</span>
+                    {{ mode === 'login' ? langService.translate('auth.new_user') :
+                    langService.translate('auth.already_have_account') }}
+                    <span (click)="!loading() && toggleMode()">{{ mode === 'login' ?
+                        langService.translate('auth.title.register') :
+                        langService.translate('auth.title.login') }}</span>
                 </div>
             </form>
         </mat-card-content>
     </mat-card>
+
+    <!-- Welcome Overlay -->
+    @if (showWelcome()) {
+    <div class="welcome-overlay" @welcomeAnimation>
+        <div class="welcome-box">
+            <mat-icon class="welcome-icon">check_circle</mat-icon>
+            <h2>{{ mode === 'login' ? langService.translate('auth.welcome_back', {name: welcomeName()}) :
+                langService.translate('auth.register_success', {name: welcomeName()}) }}</h2>
+            <p>{{ langService.translate('hud.redirecting_hub') }}</p>
+        </div>
+    </div>
+    }
 </div>

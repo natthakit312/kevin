@@ -44,17 +44,10 @@ where
     pub async fn get_all(&self, filter: &MissionFilter) -> Result<Vec<MissionModel>> {
         let models = self.mission_viewing_repository.get(filter).await?;
 
-        let mut result = Vec::new();
-
-        for model in models.into_iter() {
-            let crew_count = self
-                .mission_viewing_repository
-                .crew_counting(model.id)
-                .await
-                .unwrap_or(0);
-
-            result.push(model.to_model(crew_count as i64));
-        }
+        let result = models
+            .into_iter()
+            .map(|(entity, crew_count)| entity.to_model(crew_count))
+            .collect();
 
         Ok(result)
     }

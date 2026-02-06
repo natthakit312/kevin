@@ -1,0 +1,272 @@
+.missions-page-container,
+.mission-manager-container,
+.joined-missions-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+header {
+  margin-bottom: 32px;
+
+  h1 {
+    font-size: 2.0rem;
+    font-weight: 800;
+    margin: 0;
+
+    background: linear-gradient(to right, #ffffff, #9ca3af);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+
+  p {
+    color: var(--app-text-muted);
+    font-size: 1rem;
+    margin: 8px 0 0 0;
+    font-weight: 300;
+  }
+}
+
+.filter-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 8px 16px;
+
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+
+  .filter-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--app-text-muted);
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+
+  mat-form-field {
+    flex: 1;
+    margin-bottom: 0;
+
+    /* Hide labels & outline to keep it clean in a small toolbar */
+    .mdc-notched-outline,
+    .mat-mdc-floating-label {
+      display: none !important;
+    }
+
+    .mat-mdc-text-field-wrapper {
+      height: 40px !important;
+      padding: 0 12px !important;
+      border-radius: 8px !important;
+      background-color: rgba(250, 250, 255, 0.04) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      display: flex !important;
+      align-items: center !important;
+      transition: all 0.2s !important;
+
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+        background-color: rgba(250, 250, 255, 0.06) !important;
+      }
+    }
+
+    &.mat-focused .mat-mdc-text-field-wrapper {
+      border-color: var(--app-primary) !important;
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1) !important;
+    }
+
+    .mat-mdc-form-field-flex {
+      height: 38px !important;
+      /* Slightly inner */
+      display: flex !important;
+      align-items: center !important;
+    }
+
+    .mat-mdc-form-field-infix {
+      padding: 0 !important;
+      min-height: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      width: auto !important;
+    }
+
+    .mat-mdc-select-value,
+    .mat-mdc-select-arrow-wrapper {
+      display: flex !important;
+      align-items: center !important;
+      height: 100% !important;
+    }
+
+    .mat-mdc-select-value-text {
+      font-size: 0.9rem !important;
+      line-height: normal !important;
+    }
+
+    input {
+      padding: 0 !important;
+      height: 38px !important;
+      font-size: 0.9rem !important;
+      line-height: 38px !important;
+      margin-top: 0 !important;
+    }
+
+    mat-icon[matPrefix] {
+      margin-right: 8px !important;
+      font-size: 18px !important;
+      width: 18px !important;
+      height: 18px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: var(--app-text-muted) !important;
+    }
+  }
+
+  .filter-select {
+    max-width: 180px;
+  }
+
+  .go-btn {
+    height: 40px !important;
+    border-radius: 8px !important;
+    padding: 0 24px !important;
+    font-size: 0.9rem !important;
+    background: var(--app-primary) !important;
+  }
+}
+
+.mission-table {
+  width: 100%;
+}
+
+.cell-primary {
+  font-weight: 600;
+  color: var(--app-text-main);
+  font-size: 1.05rem;
+}
+
+.description-cell {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--app-text-muted);
+  font-weight: 300;
+}
+
+.creator-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--app-primary);
+  }
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.action-btn {
+  height: 32px !important;
+  line-height: 32px !important;
+  padding: 0 16px !important;
+  font-size: 0.75rem !important;
+  border-radius: 99px !important;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  min-width: 80px;
+
+  &.join {
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4) !important;
+    background-color: var(--app-primary);
+    color: white;
+  }
+}
+
+.no-data {
+  padding: 64px;
+  text-align: center;
+  color: var(--app-text-muted);
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+// Folder Tab Styles
+.folder-tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 0;
+  margin-right: 16px;
+  flex: 1;
+
+  .tab-item {
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--app-text-muted);
+    padding: 8px 16px; // Reduced padding
+    cursor: pointer;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem; // Slightly smaller font
+    letter-spacing: 1px;
+    border: 1px solid var(--app-border);
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    transition: all 0.2s ease;
+    min-width: 100px; // Smaller width
+    text-align: center;
+    margin-bottom: -1px;
+
+    // Tactical angled corners
+    clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+
+    &:hover {
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--app-accent);
+    }
+
+    &.active {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--app-accent);
+      border: 1px solid var(--app-accent);
+      border-bottom: none;
+      z-index: 1;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--app-accent);
+      }
+    }
+  }
+}
+
+.filter-toolbar {
+  flex-wrap: wrap;
+  align-items: flex-end;
+  padding-bottom: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid var(--app-border) !important;
+}

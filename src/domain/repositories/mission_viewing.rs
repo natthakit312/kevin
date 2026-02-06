@@ -12,7 +12,7 @@ use crate::domain::value_objects::brawler_model::BrawlerModel;
 #[automock]
 pub trait MissionViewingRepository {
     async fn view_detail(&self, mission_id: i32) -> Result<MissionEntity>;
-    async fn get(&self, filter: &MissionFilter) -> Result<Vec<MissionEntity>>;
+    async fn get(&self, filter: &MissionFilter) -> Result<Vec<(MissionEntity, i64)>>;
     async fn crew_counting(&self, mission_id: i32) -> Result<u32>;
     async fn get_mission_crew(&self, mission_id: i32) -> Result<Vec<BrawlerModel>>;
 }

@@ -1,0 +1,210 @@
+<div class="mission-container">
+    <div class="left-panel">
+        <!-- SATELLITE INTEL FEED -->
+        <!-- TACTICAL SIGNAL MONITOR (No Images) -->
+        <div class="tactical-monitor-card">
+            <div class="monitor-header">
+                <div class="signal-icon">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+                <span>{{ langService.translate('hud.uplink_analysis') }}</span>
+                <div class="status-tag">LIVE</div>
+            </div>
+
+            <div class="monitor-viewport">
+                <div class="grid-overlay"></div>
+                <div class="crt-scanlines"></div>
+                <div class="scanning-bar"></div>
+
+                <div class="waveform-container">
+                    <div class="wave"></div>
+                    <div class="wave"></div>
+                    <div class="wave"></div>
+                </div>
+
+                <div class="data-scroll">
+                    <div class="log-line">> {{ langService.translate('hud.intel_stream') }}</div>
+                    <div class="log-line">> {{ langService.translate('hud.sync_orbital') }}</div>
+                    <div class="log-line">> {{ langService.translate('hud.signal_strength') }}: 98%</div>
+                    <div class="log-line">> {{ langService.translate('hud.active_encryption') }}: AES-256</div>
+                </div>
+
+                <div class="corner-accents">
+                    <div class="acc tl"></div>
+                    <div class="acc tr"></div>
+                    <div class="acc bl"></div>
+                    <div class="acc br"></div>
+                </div>
+
+                <div class="coordinate-osd">
+                    <div class="coord-header">// {{ langService.translate('hud.target_location') }}</div>
+                    <div class="coord-row">13°45'22.7"N</div>
+                    <div class="coord-row">100°30'06.5"E</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mission-card" *ngIf="mission()">
+            <div class="header-row">
+                <div class="title-group">
+                    <h1>{{ mission()?.name }}</h1>
+                    <span class="status-pill {{ getStatusClass(mission()?.status!) }}">
+                        {{ langService.translate('missions.status.' + mission()?.status?.toLowerCase()) }}
+                    </span>
+                </div>
+
+                <div class="header-actions" *ngIf="isLoggedIn()">
+                    <button mat-flat-button color="primary"
+                        *ngIf="!isMember() && !isChief() && mission()?.status === 'Open'" (click)="onJoin()">
+                        <mat-icon>person_add</mat-icon>
+                        {{ langService.translate('missions.action.join') }}
+                    </button>
+                    <button mat-stroked-button color="warn"
+                        *ngIf="isMember() && !isChief() && mission()?.status !== 'Completed' && mission()?.status !== 'Failed'"
+                        (click)="onLeave()">
+                        <mat-icon>exit_to_app</mat-icon>
+                        {{ langService.translate('missions.action.leave') }}
+                    </button>
+                    <span class="creator-badge" *ngIf="isChief()">
+                        <mat-icon>workspace_premium</mat-icon>
+                        {{ langService.translate('missions.table.creator') }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="description">
+                {{ mission()?.description || '—' }}
+            </div>
+
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <label>{{ langService.translate('missions.table.creator') }}</label>
+                    <span>
+                        <mat-icon>security</mat-icon>
+                        {{ mission()?.chief_display_name }}
+                    </span>
+                </div>
+                <div class="meta-item">
+                    <label>{{ langService.translate('missions.table.created') }}</label>
+                    <span>
+                        <mat-icon>event</mat-icon>
+                        {{ mission()?.created_at | date:'d/M/yy' }}
+                    </span>
+                </div>
+                <div class="meta-item" *ngIf="mission()?.updated_at && mission()?.updated_at !== mission()?.created_at">
+                    <label>{{ langService.translate('missions.table.updated') }}</label>
+                    <span>
+                        <mat-icon>update</mat-icon>
+                        {{ mission()?.updated_at | date:'d/M/yy' }}
+                    </span>
+                </div>
+                <div class="meta-item">
+                    <label>{{ langService.translate('missions.table.crew') }}</label>
+                    <span>
+                        <mat-icon>group</mat-icon>
+                        {{ mission()?.crew_count }} / {{ mission()?.max_crew }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="crew-card">
+            <h2>
+                <mat-icon>groups</mat-icon>
+                {{ langService.translate('mission.crew') }}
+                <span class="count-badge" *ngIf="crew()">{{ crew().length }}</span>
+            </h2>
+
+            <div class="crew-grid">
+                <div class="crew-member" *ngFor="let member of crew()">
+                    <img [src]="getAvatar(member.avatar_url)" [alt]="member.display_name">
+                    <div class="info">
+                        <span class="name">{{ member.display_name }}</span>
+                        <span class="role">{{ member.id === mission()?.chief_id ?
+                            langService.translate('missions.table.creator') :
+                            langService.translate('common.crew_member')
+                            }}</span>
+                    </div>
+                </div>
+            </div>
+            <p *ngIf="crew().length === 0" style="color: grey; text-align: center;">
+                {{ langService.translate('mission.crew.empty') }}
+            </p>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="chat-header">
+            <h3>{{ langService.translate('mission.chat.title') }}</h3>
+        </div>
+
+        <div class="chat-messages" #chatContainer>
+            <div class="load-more-container" *ngIf="hasMore()">
+                <button mat-button class="load-more-btn" (click)="loadMore()" [disabled]="loadingMore()">
+                    <mat-icon *ngIf="!loadingMore()">history</mat-icon>
+                    <span *ngIf="!loadingMore()">RETRIEVE OLDER LOGS</span>
+                    <span *ngIf="loadingMore()">DOWNLOADING...</span>
+                </button>
+            </div>
+            <div class="message-tactical" *ngFor="let msg of messages()" [ngClass]="{
+                    'mine': msg.sender_id === currentUserId(),
+                    'system': msg.sender_id === -1
+                 }">
+                <div class="message-wrapper">
+                    <img *ngIf="msg.sender_id !== -1" [src]="getAvatar(msg.sender_avatar_url)" class="chat-avatar">
+                    <div class="message-body">
+                        <div class="radio-tag" *ngIf="msg.sender_id !== -1">
+                            <span class="sender">{{ msg.sender_display_name }}</span>
+                            <span class="status-dot"></span>
+                        </div>
+
+                        <div class="radio-bubble">
+                            <div class="content">{{ msg.content }}</div>
+                            <div class="footer">
+                                <span class="time">{{ msg.created_at | date:'HH:mm' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="messages().length === 0" class="empty-terminal">
+                <p>> {{ langService.translate('mission.no_intel') }}</p>
+                <p>> {{ langService.translate('mission.waiting_comm') }}</p>
+            </div>
+        </div>
+
+        <div class="chat-input" *ngIf="isLoggedIn() && (isMember() || isChief())">
+            <input #msgInput type="text" (keydown.enter)="sendMessage(msgInput.value); msgInput.value = ''"
+                [placeholder]="langService.translate('mission.chat.input_placeholder')">
+            <button mat-fab color="primary" (click)="sendMessage(msgInput.value); msgInput.value = ''">
+                <mat-icon>send</mat-icon>
+            </button>
+        </div>
+
+        <div class="chat-login-prompt" *ngIf="!isLoggedIn()">
+            <button mat-stroked-button color="primary" (click)="navigateToLogin()">
+                {{ langService.translate('mission.chat.login_to_chat') }}
+            </button>
+        </div>
+
+        <div class="chat-join-prompt" *ngIf="isLoggedIn() && !isMember() && !isChief()">
+            <ng-container *ngIf="mission()?.status === 'Open'; else cannotJoin">
+                <p style="text-align: center; color: var(--app-text-muted); padding: 20px;">
+                    {{ langService.translate('mission.join_to_chat') }}
+                </p>
+                <button mat-flat-button color="primary" style="width: 100%;" (click)="onJoin()">
+                    {{ langService.translate('missions.action.join') }}
+                </button>
+            </ng-container>
+            <ng-template #cannotJoin>
+                <p style="text-align: center; color: var(--app-text-muted); padding: 20px;">
+                    {{ mission()?.status === 'InProgress' ? langService.translate('mission.chat_restricted') :
+                    langService.translate('mission.chat_closed') }}
+                </p>
+            </ng-template>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="dialog-container">
+    <div class="dialog-accent warn"></div>
+    <div class="dialog-content-wrapper">
+        <header class="dialog-header">
+            <div class="auth-tag">{{ langService.translate('hud.auth_required') }}</div>
+            <h2>{{ data.title || 'Confirm' }}</h2>
+        </header>
+
+        <div class="dialog-body">
+            <p class="message">{{ data.message }}</p>
+            <div class="system-check">
+                <span class="pulse-dot"></span>
+                <span class="status-text">{{ langService.translate('hud.awaiting_input') }}</span>
+            </div>
+        </div>
+
+        <div class="dialog-actions">
+            <button mat-button (click)="onCancel()" class="cancel-btn">
+                {{ data.cancelText || 'Cancel' }}
+            </button>
+            <button (click)="onConfirm()" mat-flat-button class="confirm-btn">
+                {{ data.confirmText || 'Confirm' }}
+            </button>
+        </div>
+    </div>
+</div>
