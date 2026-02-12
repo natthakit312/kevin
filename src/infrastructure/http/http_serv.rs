@@ -62,6 +62,7 @@ fn api_serve(db_pool: Arc<PgPoolSquad>) -> Router {
             "/mission-messages",
             routers::mission_messages::routes(Arc::clone(&db_pool)),
         )
+        .route("/health", axum::routing::get(|| async { "OK" }))
         .fallback(|| async { (StatusCode::NOT_FOUND, "API not found") })
 }
 

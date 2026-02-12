@@ -11,30 +11,31 @@ pub fn load() -> Result<DotEnvyConfig> {
     dotenvy::dotenv().ok();
 
     let server = Server {
-        port: std::env::var("SERVER_PORT")
-            .expect("SERVER_PORT is valid")
-            .parse()?,
-        body_limit: std::env::var("SERVER_BODY_LIMIT")
-            .expect("SERVER_BODY_LIMIT is valid")
-            .parse()?,
-        timeout: std::env::var("SERVER_TIMEOUT")
-            .expect("SERVER_TIMEOUT is valid")
-            .parse()?,
+        port: env::var("SERVER_PORT")
+            .map_err(|_| anyhow::anyhow!("SERVER_PORT is missing"))?
+            .parse()
+            .map_err(|_| anyhow::anyhow!("SERVER_PORT must be a number"))?,
+        body_limit: env::var("SERVER_BODY_LIMIT")
+            .map_err(|_| anyhow::anyhow!("SERVER_BODY_LIMIT is missing"))?
+            .parse()
+            .map_err(|_| anyhow::anyhow!("SERVER_BODY_LIMIT must be a number"))?,
+        timeout: env::var("SERVER_TIMEOUT")
+            .map_err(|_| anyhow::anyhow!("SERVER_TIMEOUT is missing"))?
+            .parse()
+            .map_err(|_| anyhow::anyhow!("SERVER_TIMEOUT must be a number"))?,
     };
 
     let database = Database {
-        url: std::env::var("DATABASE_URL")
-            .expect("DATABASE_URL is valid")
-            .parse()?,
+        url: env::var("DATABASE_URL").map_err(|_| anyhow::anyhow!("DATABASE_URL is missing"))?,
     };
 
-    let secret = std::env::var("JWT_USER_SECRET")
-        .expect("SECRET is valid")
-        .parse()?;
+    let secret =
+        env::var("JWT_USER_SECRET").map_err(|_| anyhow::anyhow!("JWT_USER_SECRET is missing"))?;
 
-    let max_crew_size = std::env::var("MAX_CREW_SIZE")
-        .expect("MAX_CREW_SIZE is valid")
-        .parse()?;
+    let max_crew_size = env::var("MAX_CREW_SIZE")
+        .unwrap_or_else(|_| "5".to_string()) // Default to 5 if missing
+        .parse()
+        .map_err(|_| anyhow::anyhow!("MAX_CREW_SIZE must be a number"))?;
 
     let config = DotEnvyConfig {
         server,
