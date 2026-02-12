@@ -1,6 +1,7 @@
 use crate::domain::repositories::brawlers::BrawlerRepository;
 use crate::domain::value_objects::base64_img::Base64Img;
 use crate::domain::value_objects::brawler_model::RegisterBrawlerModel;
+use crate::domain::value_objects::mission_model::MissionModel;
 use crate::domain::value_objects::uploaded_img::UploadedImg;
 use crate::infrastructure::argon2::hash;
 use crate::infrastructure::cloundinary::UploadImageOptions;
@@ -28,10 +29,17 @@ where
 
         let register_entity = register_model.to_entity();
 
+        let username = register_model.username.clone();
         let display_name = register_model.display_name.clone();
         let brawler_id = self.brawler_repository.register(register_entity).await?;
 
-        let passport = Passport::new(brawler_id, display_name, None)?;
+        let passport = Passport::new(
+            brawler_id,
+            username,
+            display_name,
+            None,
+            Some("RECON".to_string()),
+        )?;
 
         Ok(passport)
     }
@@ -55,5 +63,19 @@ where
             .await?;
 
         Ok(uploaded)
+    }
+
+    pub async fn get_missions(&self, brawler_id: i32) -> Result<Vec<MissionModel>> {
+        self.brawler_repository.get_missions(brawler_id).await
+    }
+
+    pub async fn crew_counting(&self, mission_id: i32) -> Result<u32> {
+        self.brawler_repository.crew_counting(mission_id).await
+    }
+
+    pub async fn update_specialty(&self, user_id: i32, specialty: String) -> Result<()> {
+        self.brawler_repository
+            .update_specialty(user_id, specialty)
+            .await
     }
 }

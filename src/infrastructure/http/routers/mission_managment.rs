@@ -29,6 +29,8 @@ use crate::{
     },
 };
 
+use serde_json::json;
+
 pub async fn add<T1, T2>(
     State(user_case): State<Arc<MissionManagementUseCase<T1, T2>>>,
     Extension(user_id): Extension<i32>,
@@ -39,8 +41,11 @@ where
     T2: MissionViewingRepository + Send + Sync,
 {
     match user_case.add(user_id, model).await {
-        Ok(passport) => (StatusCode::OK, Json(passport)).into_response(),
-        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+        Ok(id) => (StatusCode::OK, Json(json!({ "mission_id": id }))).into_response(),
+        Err(e) => {
+            eprintln!("ADD MISSION ERROR: {:?}", e);
+            (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response()
+        }
     }
 }
 
@@ -55,8 +60,11 @@ where
     T2: MissionViewingRepository + Send + Sync,
 {
     match user_case.edit(mission_id, user_id, model).await {
-        Ok(passport) => (StatusCode::OK, Json(passport)).into_response(),
-        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+        Ok(id) => (StatusCode::OK, Json(id)).into_response(),
+        Err(e) => {
+            eprintln!("EDIT MISSION ERROR: {:?}", e);
+            (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response()
+        }
     }
 }
 
@@ -70,8 +78,11 @@ where
     T2: MissionViewingRepository + Send + Sync,
 {
     match user_case.remove(mission_id, user_id).await {
-        Ok(passport) => (StatusCode::OK, Json(passport)).into_response(),
-        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+        Ok(_) => StatusCode::OK.into_response(),
+        Err(e) => {
+            eprintln!("REMOVE MISSION ERROR: {:?}", e);
+            (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response()
+        }
     }
 }
 
@@ -83,9 +94,18 @@ pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
         MissionManagementUseCase::new(Arc::new(mission_repository), Arc::new(viewing_repository));
 
     Router::new()
-        .route("/", post(add))
-        .route("/{mission_id}", patch(edit))
-        .route("/{mission_id}", delete(remove))
+        .route(
+            "/",
+            post(add::<MissionManagementPostgres, MissionViewingPostgres>),
+        )
+        .route(
+            "/{mission_id}",
+            patch(edit::<MissionManagementPostgres, MissionViewingPostgres>),
+        )
+        .route(
+            "/{mission_id}",
+            delete(remove::<MissionManagementPostgres, MissionViewingPostgres>),
+        )
         .route_layer(axum::middleware::from_fn(auth::authorization))
         .with_state(Arc::new(use_case))
 }

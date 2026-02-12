@@ -13,6 +13,7 @@ pub struct MissionEntity {
     pub name: String,
     pub status: String,
     pub description: Option<String>,
+    pub max_crew: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -24,6 +25,7 @@ pub struct AddMissionEntity {
     pub name: String,
     pub status: String,
     pub description: Option<String>,
+    pub max_crew: i32,
 }
 
 #[derive(Debug, Clone, AsChangeset)]
@@ -38,14 +40,16 @@ pub struct EditMissionEntity {
 }
 
 impl MissionEntity {
-    pub fn to_model(&self, crew_count: i64) -> MissionModel {
+    pub fn to_model(&self, crew_count: i64, chief_display_name: String) -> MissionModel {
         MissionModel {
             id: self.id,
             name: self.name.clone(),
             description: self.description.clone(),
             status: self.status.clone(),
             chief_id: self.chief_id,
+            chief_display_name,
             crew_count,
+            max_crew: self.max_crew,
             created_at: self.created_at,
             updated_at: self.updated_at,
         }

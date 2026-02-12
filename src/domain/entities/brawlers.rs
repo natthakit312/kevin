@@ -11,6 +11,7 @@ pub struct BrawlerEntity {
     pub display_name: String,
     pub avatar_url: Option<String>,
     pub avatar_public_id: Option<String>,
+    pub specialty: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }

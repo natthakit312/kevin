@@ -1,7 +1,8 @@
 use crate::domain::entities::brawlers::RegisterBrawlerEntity;
 use diesel::prelude::*;
-use diesel::sql_types::{Integer, Text};
+use diesel::sql_types::{Int4, Varchar}; // Using Int4 and Varchar to be consistent with MissionModel
 use serde::{Deserialize, Serialize};
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RegisterBrawlerModel {
@@ -21,14 +22,23 @@ impl RegisterBrawlerModel {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, QueryableByName)]
-#[serde(rename_all = "camelCase")]
 pub struct BrawlerModel {
-    #[diesel(sql_type = Text)]
+    #[diesel(sql_type = Int4)]
+    pub id: i32,
+    #[diesel(sql_type = Varchar)]
     pub display_name: String,
-    #[diesel(sql_type = Text)]
+    #[diesel(sql_type = Varchar)]
     pub avatar_url: String,
-    #[diesel(sql_type = Integer)]
+    #[diesel(sql_type = Varchar)]
+    pub specialty: String,
+    #[diesel(sql_type = Int4)]
     pub mission_success_count: i32,
-    #[diesel(sql_type = Integer)]
+    #[diesel(sql_type = Int4)]
     pub mission_join_count: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UpdateSpecialtyModel {
+    pub specialty: String,
 }
