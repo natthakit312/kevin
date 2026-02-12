@@ -26,30 +26,13 @@ where
     }
 
     pub async fn view_detail(&self, mission_id: i32) -> Result<MissionModel> {
-        let crew_count = self
-            .mission_viewing_repository
-            .crew_counting(mission_id)
-            .await?;
-
-        let model = self
-            .mission_viewing_repository
+        self.mission_viewing_repository
             .view_detail(mission_id)
-            .await?;
-
-        let result = model.to_model(crew_count as i64);
-
-        Ok(result)
+            .await
     }
 
     pub async fn get_all(&self, filter: &MissionFilter) -> Result<Vec<MissionModel>> {
-        let models = self.mission_viewing_repository.get(filter).await?;
-
-        let result = models
-            .into_iter()
-            .map(|(entity, crew_count)| entity.to_model(crew_count))
-            .collect();
-
-        Ok(result)
+        self.mission_viewing_repository.gets(filter).await
     }
 
     pub async fn get_crew(&self, mission_id: i32) -> Result<Vec<BrawlerModel>> {

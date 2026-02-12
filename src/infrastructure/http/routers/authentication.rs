@@ -24,6 +24,8 @@ where
             let err_msg = e.to_string();
             if err_msg.contains("NotFound") || err_msg.contains("not found") {
                 (StatusCode::BAD_REQUEST, "Record Not Found").into_response()
+            } else if err_msg.contains("Invalid password") {
+                (StatusCode::BAD_REQUEST, "Invalid password").into_response()
             } else {
                 (StatusCode::INTERNAL_SERVER_ERROR, err_msg).into_response()
             }

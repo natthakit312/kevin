@@ -8,8 +8,6 @@ use crate::domain::{
     value_objects::mission_statuses::MissionStatuses,
 };
 
-const MAX_CREW_PER_MISSION: u32 = 5;
-
 pub struct MissionOperationUseCase<T1, T2>
 where
     T1: MissionOperationRepository + Send + Sync,
@@ -44,10 +42,12 @@ where
 
         let is_status_open_or_fail = mission.status == MissionStatuses::Open.to_string()
             || mission.status == MissionStatuses::Failed.to_string();
+
         let update_condition = is_status_open_or_fail
             && crew_count > 0
-            && crew_count < MAX_CREW_PER_MISSION
+            && (crew_count as i32) <= mission.max_crew
             && mission.chief_id == chief_id;
+
         if !update_condition {
             return Err(anyhow::anyhow!("Invalid condition to change stages!"));
         }

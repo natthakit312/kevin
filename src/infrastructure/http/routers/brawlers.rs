@@ -10,8 +10,11 @@ use crate::{
     },
 };
 use axum::{
-    Extension, Json, Router, extract::State, http::StatusCode, response::IntoResponse,
-    routing::post,
+    Extension, Json, Router,
+    extract::State,
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{get, post},
 };
 
 use std::sync::Arc;
@@ -22,12 +25,27 @@ pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
 
     let protected_routes: Router<_> = Router::new()
         .route("/avatar", post(upload_avatar))
+        .route("/my-missions", get(get_missions))
+        .route("/specialty", post(update_specialty))
         .route_layer(axum::middleware::from_fn(authorization));
 
     Router::new()
         .merge(protected_routes)
         .route("/register", post(register))
         .with_state(Arc::new(use_case))
+}
+
+pub async fn get_missions<T>(
+    State(use_case): State<Arc<BrawlersUseCase<T>>>,
+    Extension(user_id): Extension<i32>,
+) -> impl IntoResponse
+where
+    T: BrawlerRepository + Send + Sync,
+{
+    match use_case.get_missions(user_id).await {
+        Ok(missions) => (StatusCode::OK, Json(missions)).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
 }
 
 pub async fn register<T>(
@@ -53,6 +71,22 @@ where
 {
     match use_case.upload_base64img(model.base64_img, user_id).await {
         Ok(uploaded) => (StatusCode::OK, Json(uploaded)).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
+}
+
+use crate::domain::value_objects::brawler_model::UpdateSpecialtyModel;
+
+pub async fn update_specialty<T>(
+    State(use_case): State<Arc<BrawlersUseCase<T>>>,
+    Extension(user_id): Extension<i32>,
+    Json(model): Json<UpdateSpecialtyModel>,
+) -> impl IntoResponse
+where
+    T: BrawlerRepository + Send + Sync,
+{
+    match use_case.update_specialty(user_id, model.specialty).await {
+        Ok(_) => StatusCode::OK.into_response(),
         Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
     }
 }

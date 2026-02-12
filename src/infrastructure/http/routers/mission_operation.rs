@@ -52,7 +52,10 @@ where
             ),
         )
             .into_response(),
-        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+        Err(e) => {
+            eprintln!("IN PROGRESS ERROR: {:?}", e);
+            (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response()
+        }
     }
 }
 
@@ -78,7 +81,10 @@ where
             ),
         )
             .into_response(),
-        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+        Err(e) => {
+            eprintln!("COMPLETED ERROR: {:?}", e);
+            (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response()
+        }
     }
 }
 
@@ -104,7 +110,10 @@ where
             ),
         )
             .into_response(),
-        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+        Err(e) => {
+            eprintln!("FAILED ERROR: {:?}", e);
+            (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response()
+        }
     }
 }
 
@@ -118,9 +127,18 @@ pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
     );
 
     Router::new()
-        .route("/in_progress/{mission_id}", patch(in_progress))
-        .route("/to_completed/{mission_id}", patch(to_completed))
-        .route("/to_failed/{mission_id}", patch(to_failed))
+        .route(
+            "/in_progress/{mission_id}",
+            patch(in_progress::<MissionOperationPostgres, MissionViewingPostgres>),
+        )
+        .route(
+            "/to_completed/{mission_id}",
+            patch(to_completed::<MissionOperationPostgres, MissionViewingPostgres>),
+        )
+        .route(
+            "/to_failed/{mission_id}",
+            patch(to_failed::<MissionOperationPostgres, MissionViewingPostgres>),
+        )
         .route_layer(middleware::from_fn(authorization))
         .with_state(Arc::new(use_case))
 }
