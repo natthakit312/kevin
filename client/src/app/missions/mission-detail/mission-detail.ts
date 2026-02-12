@@ -15,6 +15,7 @@ import { LanguageService } from '../../_services/language-service';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialog } from '../../_dialog/confirm-dialog/confirm-dialog';
 import { firstValueFrom } from 'rxjs';
+import { RealtimeChannel } from '@supabase/supabase-js';
 
 @Component({
     selector: 'app-mission-detail',
@@ -46,7 +47,7 @@ export class MissionDetail implements OnInit, OnDestroy {
 
     missionId!: number;
 
-    private pollSub?: Subscription;
+    private messageSubscription?: RealtimeChannel;
 
     @ViewChild('chatContainer') private chatContainer!: ElementRef;
 
@@ -58,14 +59,21 @@ export class MissionDetail implements OnInit, OnDestroy {
 
             await this.loadData();
 
-            // Poll for new messages every 5 seconds
-            this.pollSub = interval(5000).subscribe(() => this.loadMessages(true));
+            // Real-time updates via Supabase
+            this.messageSubscription = this.messageService.subscribeToMessages(this.missionId, (newMsg) => {
+                // Check if message already exists (to avoid duplicates from local refresh)
+                const exists = this.messages().some(m => m.id === newMsg.id);
+                if (!exists) {
+                    this.messages.update(prev => [...prev, newMsg]);
+                    setTimeout(() => this.scrollToBottom(), 100);
+                }
+            });
         }
     }
 
     ngOnDestroy() {
-        if (this.pollSub) {
-            this.pollSub.unsubscribe();
+        if (this.messageSubscription) {
+            this.messageSubscription.unsubscribe();
         }
     }
 
@@ -147,10 +155,9 @@ export class MissionDetail implements OnInit, OnDestroy {
         if (!content.trim() || !this.isLoggedIn()) return;
 
         try {
-            // Optimistic update or wait for reload?
-            // Let's reload to be sure we get the correct ID/Time
+            // Send via Backend (will be captured by Real-time subscription)
             await this.messageService.sendMessage(this.missionId, content);
-            await this.loadMessages(true);
+            // We no longer need manual refresh here!
             setTimeout(() => this.scrollToBottom(), 100);
         } catch (e) {
             console.error('Failed to send message', e);
