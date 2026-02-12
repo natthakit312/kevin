@@ -1,0 +1,14 @@
+target/
+.env
+.git
+.gitignore
+.vscode
+client/
+node_modules/
+CHANGELOG_TODAY.md
+DETAILED_CHANGELOG.md
+I18N_SUMMARY.md
+MISSION_INTERACTION_GUIDE.md
+MISSION_UPGRADE_REPORT.md
+README.md
+api test/
